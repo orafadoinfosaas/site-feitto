@@ -1,0 +1,14 @@
+# Só para conferir a imagem antes de subir no EasyPanel:
+#   docker compose up --build
+#   http://localhost:8080
+services:
+  site:
+    build:
+      context: .
+      args:
+        # o Astro resolve isto no build, não no runtime
+        PUBLIC_DIAGNOSTICO_ENDPOINT: ${PUBLIC_DIAGNOSTICO_ENDPOINT:-}
+        PUBLIC_NOINDEX: ${PUBLIC_NOINDEX:-true}
+    ports:
+      - '8080:8080'
+    restart: unless-stopped

@@ -9,7 +9,7 @@ npm install
 npm run dev      # http://localhost:4321
 npm run build    # gera dist/
 npm run check    # tipos e diagnósticos do Astro
-npm run test     # build + fluxo de consentimento num navegador real
+npm run test     # build + consentimento + cabeçalhos, em navegador real
 ```
 
 ## Rotas
@@ -96,38 +96,57 @@ export SUPABASE_ACCESS_TOKEN=...    # supabase.com/dashboard/account/tokens
 
 Veja `.env.example` para a lista completa do que precisa ser preenchido.
 
-## Publicar na Vercel
+## Publicar
 
-O projeto é estático; a Vercel detecta o Astro sozinha. Três passos:
+Imagem Docker em dois estágios: Node constrói, nginx serve. O runtime é o
+`nginx-unprivileged`, que não roda como root e escuta na **8080**.
 
-**1. Variáveis de ambiente** (Project Settings → Environment Variables)
+```bash
+docker compose up --build   # confere em http://localhost:8080
+```
+
+### No EasyPanel
+
+**1. App → Source**: este repositório, branch `main`, Dockerfile na raiz.
+
+**2. Build Arguments** — e não variáveis de ambiente:
 
 ```
 PUBLIC_DIAGNOSTICO_ENDPOINT = https://<ref>.supabase.co/functions/v1/diagnostico
-PUBLIC_NOINDEX              = true      # enquanto for pré-visualização
+PUBLIC_NOINDEX              = true
 ```
 
-`PUBLIC_NOINDEX` põe `noindex, nofollow` em todas as páginas. Sem isso, o
-Google acharia um segundo site com o mesmo conteúdo, e a cliente poderia cair
-nele pela busca. Remover quando o domínio final entrar.
+O Astro resolve as `PUBLIC_*` **durante o build**, porque o site é estático e
+o valor entra no JavaScript gerado. Passar como variável de ambiente do
+contêiner não surtiria efeito nenhum — o bundle já estaria pronto. Mudou o
+endpoint, tem que reconstruir.
 
-**2. Liberar o domínio no CORS da Edge Function**
+`PUBLIC_NOINDEX=true` põe `noindex, nofollow` em todas as páginas. Tirar
+quando o domínio final entrar no ar.
 
-`SITE_ORIGIN` aceita lista separada por vírgula, sem espaço depois da vírgula:
+**3. Porta**: 8080.
+
+**4. Liberar o domínio no CORS da Edge Function:**
 
 ```bash
 npx supabase secrets set --project-ref <ref> \
-  SITE_ORIGIN="https://feitto.com.br,https://<o-que-a-vercel-deu>.vercel.app"
+  SITE_ORIGIN="https://feitto.com.br,https://<o-domínio-do-easypanel>"
 ```
 
-Sem este passo o formulário responde **403** no domínio de pré-visualização.
-Não existe curinga: cada origem é escrita por extenso, senão qualquer site
-hospedado na mesma plataforma poderia postar no formulário.
+Sem isso o formulário responde **403** fora de `feitto.com.br`. A lista aceita
+`*` no lugar do sufixo que a hospedagem gera sozinha
+(`https://site-feitto-*.dominio.com`); o curinga casa só com letras, números e
+hífen, então não atravessa ponto nem barra.
 
-**3. Conferir**
+### O que o nginx entrega
 
-Abrir `/diagnostico`, enviar uma resposta e verificar se o card nasceu no
-ClickUp. Apagar o card e a linha depois do teste.
+Cabeçalhos de segurança, CSP, compressão e cache imutável para fontes e
+assets versionados estão em `docker/nginx.conf`. O HTML vai com
+`must-revalidate`, senão uma correção demoraria a aparecer.
+
+A CSP libera de antemão os domínios do GA4 e do Pixel: eles só sobem depois
+do aceite, mas a política precisa permiti-los, senão o consentimento não
+teria efeito prático.
 
 ## Escrita
 

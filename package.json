@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "check": "astro check",
     "test:consent": "tsx tests/consentimento.test.ts",
-    "test": "npm run build && npm run test:consent"
+    "test": "npm run build && npm run test:consent && npm run test:headers",
+    "test:headers": "tsx tests/headers.test.ts"
   },
   "dependencies": {
     "astro": "^7.3.3",

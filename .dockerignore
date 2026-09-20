@@ -1,0 +1,23 @@
+node_modules
+dist
+.astro
+.git
+.github
+.vscode
+.DS_Store
+*.log
+
+# segredos nunca entram na imagem
+.env
+.env.*
+!.env.example
+
+# fora do que o site precisa para rodar
+tests
+supabase
+assets
+base
+docs
+*.pdf
+*.docx
+README.md

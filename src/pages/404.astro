@@ -1,0 +1,97 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+---
+
+<Base
+  title="Página não encontrada | FEITTO"
+  description="O endereço que você abriu não existe mais, ou nunca existiu."
+  bare
+>
+  <Logo slot="bare-logo" width={132} />
+
+  <section class="shell erro">
+    <p class="eyebrow">Erro 404</p>
+    <h1 class="erro__title">
+      Esta página não <em class="key">existe</em>.
+    </h1>
+    <p class="lede">
+      O endereço que você abriu saiu do ar ou nunca esteve nele. Acontece, e
+      normalmente não é culpa de quem clicou.
+    </p>
+
+    <nav class="erro__saidas" aria-label="Para onde ir">
+      <a href="/" class="btn btn--solid">Ir para o início</a>
+      <a href="/diagnostico" class="btn btn--ghost">Fazer o diagnóstico</a>
+    </nav>
+
+    <div class="erro__mapa">
+      <p class="erro__rotulo">Ou vá direto ao ponto</p>
+      <ul>
+        <li><a href="/metodo">O método</a></li>
+        <li><a href="/quem-conduz">Quem conduz</a></li>
+        <li><a href="/casos">Casos</a></li>
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .erro {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.625rem;
+    padding-block: clamp(4rem, 12vh, 8rem) clamp(4rem, 10vh, 7rem);
+    max-width: 44rem;
+  }
+
+  .erro__title {
+    font-size: clamp(2.5rem, 6vw, 4.25rem);
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+  }
+
+  .erro__saidas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-block-start: 1rem;
+  }
+
+  .erro__mapa {
+    margin-block-start: 1.5rem;
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: 1.75rem;
+    width: 100%;
+  }
+  .erro__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+  .erro__mapa ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 2.25rem;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .erro__mapa a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 1.0625rem;
+    font-weight: 300;
+    text-decoration: none;
+    color: var(--coffee);
+    border-block-end: 1px solid transparent;
+    transition: color 200ms var(--ease), border-color 200ms var(--ease);
+  }
+  .erro__mapa a:hover {
+    color: var(--ink);
+    border-color: var(--drift);
+  }
+</style>

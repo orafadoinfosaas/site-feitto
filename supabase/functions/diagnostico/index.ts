@@ -29,24 +29,45 @@ const supabase = createClient(
 /**
  * Só o site responde por este formulário.
  *
- * SITE_ORIGIN aceita uma lista separada por vírgula, para o domínio de
- * produção conviver com o endereço de pré-visualização enquanto a cliente
- * aprova. Cada origem é escrita por extenso: nada de curinga, senão qualquer
- * subdomínio de uma plataforma de hospedagem passaria a postar aqui.
+ * SITE_ORIGIN é uma lista separada por vírgula. Cada entrada é uma origem
+ * exata, ou uma com `*` no lugar do sufixo que a hospedagem gera sozinha —
+ * a Vercel troca esse pedaço a cada deploy, e uma lista fixa vencia no
+ * primeiro push.
+ *
+ *   https://feitto.com.br
+ *   https://site-feitto-*.vercel.app
+ *
+ * O `*` casa apenas com letras, números e hífen: não atravessa ponto nem
+ * barra. Então `site-feitto-x.vercel.app` passa e `site-feitto-x.outro.com`
+ * não — que é a diferença entre liberar este projeto e liberar a plataforma
+ * inteira.
  */
-function origensPermitidas(): string[] {
-  return [
-    ...SITE_ORIGIN.split(',').map((o) => o.trim()),
-    'http://localhost:4321',
-    'http://127.0.0.1:4321',
-  ].filter(Boolean);
+function paraRegex(padrao: string): RegExp {
+  const escapado = padrao.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`^${escapado.replace(/\\\*/g, '[a-z0-9-]+')}$`);
+}
+
+const PERMITIDAS = [
+  ...SITE_ORIGIN.split(',').map((o) => o.trim()),
+  'http://localhost:4321',
+  'http://127.0.0.1:4321',
+]
+  .filter(Boolean)
+  .map(paraRegex);
+
+function origemLiberada(origem: string | null): boolean {
+  return origem !== null && PERMITIDAS.some((r) => r.test(origem));
+}
+
+/** Para o cabeçalho: devolve a origem que pediu, se ela puder. */
+function origemEco(origem: string | null): string {
+  if (origemLiberada(origem)) return origem!;
+  return SITE_ORIGIN.split(',')[0]?.trim() ?? '';
 }
 
 function cors(origem: string | null): Record<string, string> {
-  const permitidas = origensPermitidas();
-  const liberada = origem && permitidas.includes(origem) ? origem : permitidas[0] ?? '';
   return {
-    'Access-Control-Allow-Origin': liberada,
+    'Access-Control-Allow-Origin': origemEco(origem),
     'Access-Control-Allow-Headers': 'content-type, authorization, apikey',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Max-Age': '86400',
@@ -91,7 +112,7 @@ Deno.serve(async (req) => {
   if (req.method !== 'POST') {
     return json({ erro: 'método não permitido' }, 405, origem);
   }
-  if (origem && !origensPermitidas().includes(origem)) {
+  if (origem && !origemLiberada(origem)) {
     return json({ erro: 'origem não permitida' }, 403, origem);
   }
 

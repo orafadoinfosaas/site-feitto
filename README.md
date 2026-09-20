@@ -109,29 +109,26 @@ docker compose up --build   # confere em http://localhost:8080
 
 **1. App → Source**: este repositório, branch `main`, Dockerfile na raiz.
 
-**2. Build Arguments** — e não variáveis de ambiente:
-
-```
-PUBLIC_DIAGNOSTICO_ENDPOINT = https://<ref>.supabase.co/functions/v1/diagnostico
-PUBLIC_NOINDEX              = true
-```
-
-O Astro resolve as `PUBLIC_*` **durante o build**, porque o site é estático e
-o valor entra no JavaScript gerado. Passar como variável de ambiente do
-contêiner não surtiria efeito nenhum — o bundle já estaria pronto. Mudou o
-endpoint, tem que reconstruir.
-
-`PUBLIC_NOINDEX=true` põe `noindex, nofollow` em todas as páginas. Tirar
-quando o domínio final entrar no ar.
-
-**3. Porta**: o contêiner escuta em **80**, 8080 e 3000. O EasyPanel encaminha
+**2. Porta**: o contêiner escuta em **80**, 8080 e 3000. O EasyPanel encaminha
 para a 80 por padrão, então não há nada a configurar.
 
 A imagem de runtime é o `nginx` oficial, e não o `nginx-unprivileged`: a 80 é
 justamente a porta que um processo sem privilégio não consegue abrir. Só o
 master roda como root, o tempo de fazer o bind; os workers descem para o
-usuário `nginx`. Se preferir o contêiner inteiro sem root, troque a imagem
-por `nginxinc/nginx-unprivileged` e aponte o domínio para a 8080.
+usuário `nginx`.
+
+**3. Nada além disso.** Não há variável obrigatória:
+
+- O endpoint da Edge Function é público por natureza — aparece no JavaScript
+  de todo visitante — então o valor real mora em `src/lib/site.ts`. Deixá-lo
+  num build argument significava que esquecer a configuração fazia o
+  formulário parar de enviar em silêncio.
+- O `noindex` é decidido pelo nginx a partir do `Host`: só `feitto.com.br`
+  é indexável, qualquer outro endereço recebe `X-Robots-Tag: noindex`.
+
+`PUBLIC_DIAGNOSTICO_ENDPOINT` e `PUBLIC_NOINDEX` seguem funcionando como
+sobrescrita, mas só têm efeito em **Build Arguments** — como variáveis de
+ambiente do contêiner chegariam tarde, com o bundle já pronto.
 
 **4. Liberar o domínio no CORS da Edge Function:**
 
@@ -141,9 +138,8 @@ npx supabase secrets set --project-ref <ref> \
 ```
 
 Sem isso o formulário responde **403** fora de `feitto.com.br`. A lista aceita
-`*` no lugar do sufixo que a hospedagem gera sozinha
-(`https://site-feitto-*.dominio.com`); o curinga casa só com letras, números e
-hífen, então não atravessa ponto nem barra.
+`*` no lugar do sufixo que a hospedagem gera sozinha; o curinga casa só com
+letras, números e hífen, então não atravessa ponto nem barra.
 
 ### O que o nginx entrega
 

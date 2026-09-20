@@ -11,6 +11,18 @@ export const site = {
   linkedin: '',
 } as const;
 
+/**
+ * Edge Function que recebe o diagnóstico.
+ *
+ * Não é segredo: esta URL aparece no JavaScript de qualquer visitante. Por
+ * isso o valor real fica aqui, e não num build argument que, esquecido, faz
+ * o formulário parar de enviar sem dizer nada. A variável de ambiente ainda
+ * sobrescreve, para apontar a um projeto de teste quando precisar.
+ */
+export const diagnosticoEndpoint =
+  import.meta.env.PUBLIC_DIAGNOSTICO_ENDPOINT ||
+  'https://ixhkxejqqeinhpvobtsx.supabase.co/functions/v1/diagnostico';
+
 export const nav = [
   { href: '/metodo', label: 'O método' },
   { href: '/quem-conduz', label: 'Quem conduz' },

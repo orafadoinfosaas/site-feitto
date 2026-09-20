@@ -16,8 +16,9 @@ interface Props {
 
 const { title, description, overlayNav = false, aviso = true, bare = false } = Astro.props;
 
-/* A pré-visualização não pode ser indexada: o Google acharia um segundo site
-   com o mesmo conteúdo, e a cliente poderia cair nele pela busca. */
+/* Reforço opcional: o nginx já manda X-Robots-Tag noindex para todo host que
+   não seja o domínio final (ver docker/nginx.conf). Esta variável existe para
+   quem servir o site sem aquele nginx. */
 const naoIndexar = import.meta.env.PUBLIC_NOINDEX === 'true';
 const current = Astro.url.pathname.replace(/\/$/, '') || '/';
 const canonical = new URL(Astro.url.pathname, Astro.site);

@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
+import { diagnosticoEndpoint } from '../lib/site';
 
 /**
  * Filtro de entrada, em etapas.
@@ -982,6 +983,10 @@ const total = etapas.length;
   }
 </style>
 
+<script is:inline define:vars={{ endpoint: diagnosticoEndpoint }}>
+  window.__FEITTO_ENDPOINT__ = endpoint;
+</script>
+
 <script>
   const form = document.querySelector<HTMLFormElement>('#diagnostico')!;
   const abertura = document.querySelector<HTMLElement>('#abertura')!;
@@ -999,12 +1004,9 @@ const total = etapas.length;
   const depois = document.querySelector<HTMLElement>('[data-depois]')!;
   const confirmacao = document.querySelector<HTMLElement>('#confirmacao')!;
 
-  /**
-   * Edge Function do Supabase. Enquanto a variável não estiver definida, o
-   * envio segue o fluxo completo na tela mas nada sai do navegador — é o que
-   * permite testar a experiência antes do backend estar no ar.
-   */
-  const ENDPOINT = import.meta.env.PUBLIC_DIAGNOSTICO_ENDPOINT ?? '';
+  /** Edge Function do Supabase, definida em src/lib/site.ts. */
+  const ENDPOINT: string = (window as unknown as { __FEITTO_ENDPOINT__?: string })
+    .__FEITTO_ENDPOINT__ ?? '';
 
   /** Erro que o servidor explicou, como o limite de envios. */
   class Respondeu extends Error {

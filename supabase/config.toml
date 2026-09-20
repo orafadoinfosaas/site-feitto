@@ -1,0 +1,6 @@
+project_id = "site-feitto"
+
+[functions.diagnostico]
+# o formulário é anônimo: quem responde não tem login.
+# A proteção é CORS + limite por IP + honeypot + validação no servidor.
+verify_jwt = false

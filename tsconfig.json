@@ -1,5 +1,6 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*.ts", "**/*.astro"],
-  "exclude": ["dist"]
+  "comment": "As Edge Functions rodam em Deno, com outro runtime e outros globais. Quem as verifica é `deno check`, não o astro check.",
+  "exclude": ["dist", "supabase"]
 }

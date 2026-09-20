@@ -8,3 +8,7 @@ dist/
 
 # ativos originais do ensaio (300dpi, pesados) — versionar no Drive
 assets/
+
+# segredos locais
+.env
+.env.local

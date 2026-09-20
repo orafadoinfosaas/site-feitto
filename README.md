@@ -64,6 +64,37 @@ fique invisível sem JavaScript.
 ícones, sem emoji. Gradiente só como máscara de legibilidade sobre fotografia.
 Um bloco escuro por página, guardado para a virada do argumento.
 
+## Backend do diagnóstico
+
+Postgres para guardar o lead, Edge Function para receber o formulário e
+espelhar no ClickUp. Detalhes e comandos em [`supabase/README.md`](supabase/README.md).
+
+A função grava no banco **antes** de chamar o ClickUp. Se o CRM cair, a
+resposta ainda é sucesso e a linha fica com `clickup_erro` preenchido, pronta
+para reenvio — o inverso perderia o lead por causa de um serviço de terceiro.
+
+Proteções: CORS restrito ao domínio, honeypot, limite de 3 envios por hora
+por hash de IP, validação de toda múltipla escolha contra a lista de opções, e
+RLS sem policies (anon e authenticated não leem nada). O IP nunca é gravado.
+
+O `astro check` ignora `supabase/`: aquele código roda em Deno. Para verificar:
+
+```bash
+cd supabase/functions/diagnostico && npx deno@2 check *.ts
+```
+
+## MCP do Supabase
+
+O `.mcp.json` sobe o servidor em `--read-only` e escopado a um único projeto.
+Antes de abrir o Claude Code, exporte as duas variáveis:
+
+```bash
+export SUPABASE_PROJECT_REF=...     # ref do projeto
+export SUPABASE_ACCESS_TOKEN=...    # supabase.com/dashboard/account/tokens
+```
+
+Veja `.env.example` para a lista completa do que precisa ser preenchido.
+
 ## Escrita
 
 A antítese curta — afirma uma coisa, nega a outra, ponto final — é a digital
@@ -96,8 +127,10 @@ O link do rodapé (`data-open-consent`) reabre o painel em qualquer página.
 
 - [ ] Dados reais em `src/lib/site.ts`: WhatsApp, Instagram, LinkedIn, domínio
 - [ ] `GA4_ID` e `META_PIXEL_ID` em `src/lib/consent.ts`
-- [ ] `ENDPOINT` em `src/pages/diagnostico.astro` — hoje o envio completa o
+- [ ] `PUBLIC_DIAGNOSTICO_ENDPOINT` no `.env` — sem ele o envio completa o
       fluxo na tela sem sair do navegador
+- [ ] Secrets da Edge Function: `CLICKUP_TOKEN`, `CLICKUP_LIST_ID`,
+      `SITE_ORIGIN`, `RATE_LIMIT_SALT`
 - [ ] Colchetes das minutas legais: razão social, CNPJ, endereço, encarregado,
       comarca, prazo de retenção — e a revisão do advogado
 - [ ] `POLICY_VERSION` em `consent.ts` ao publicar a política final
@@ -110,7 +143,9 @@ O link do rodapé (`data-open-consent`) reabre o painel em qualquer página.
 
 **Depois**
 
-- [ ] CRM (ClickUp) e o agente que lê o formulário e gera o pré-release no card
+- [ ] Agente que lê o formulário e escreve a análise no card do ClickUp. O
+      card já sai organizado na ordem em que a Luana lê; o agente substitui a
+      seção "Leitura" e nada no formulário muda
 - [ ] Seção de conteúdo. Fora do menu, e a palavra "blog" foi vetada
 - [ ] Nova assinatura da marca, se sair antes da publicação
 

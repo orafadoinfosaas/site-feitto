@@ -26,9 +26,20 @@ const supabase = createClient(
   { auth: { persistSession: false } },
 );
 
-/** Só o site responde por este formulário; em dev, o localhost do Astro. */
+/**
+ * Só o site responde por este formulário.
+ *
+ * SITE_ORIGIN aceita uma lista separada por vírgula, para o domínio de
+ * produção conviver com o endereço de pré-visualização enquanto a cliente
+ * aprova. Cada origem é escrita por extenso: nada de curinga, senão qualquer
+ * subdomínio de uma plataforma de hospedagem passaria a postar aqui.
+ */
 function origensPermitidas(): string[] {
-  return [SITE_ORIGIN, 'http://localhost:4321', 'http://127.0.0.1:4321'].filter(Boolean);
+  return [
+    ...SITE_ORIGIN.split(',').map((o) => o.trim()),
+    'http://localhost:4321',
+    'http://127.0.0.1:4321',
+  ].filter(Boolean);
 }
 
 function cors(origem: string | null): Record<string, string> {

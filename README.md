@@ -96,6 +96,39 @@ export SUPABASE_ACCESS_TOKEN=...    # supabase.com/dashboard/account/tokens
 
 Veja `.env.example` para a lista completa do que precisa ser preenchido.
 
+## Publicar na Vercel
+
+O projeto é estático; a Vercel detecta o Astro sozinha. Três passos:
+
+**1. Variáveis de ambiente** (Project Settings → Environment Variables)
+
+```
+PUBLIC_DIAGNOSTICO_ENDPOINT = https://<ref>.supabase.co/functions/v1/diagnostico
+PUBLIC_NOINDEX              = true      # enquanto for pré-visualização
+```
+
+`PUBLIC_NOINDEX` põe `noindex, nofollow` em todas as páginas. Sem isso, o
+Google acharia um segundo site com o mesmo conteúdo, e a cliente poderia cair
+nele pela busca. Remover quando o domínio final entrar.
+
+**2. Liberar o domínio no CORS da Edge Function**
+
+`SITE_ORIGIN` aceita lista separada por vírgula, sem espaço depois da vírgula:
+
+```bash
+npx supabase secrets set --project-ref <ref> \
+  SITE_ORIGIN="https://feitto.com.br,https://<o-que-a-vercel-deu>.vercel.app"
+```
+
+Sem este passo o formulário responde **403** no domínio de pré-visualização.
+Não existe curinga: cada origem é escrita por extenso, senão qualquer site
+hospedado na mesma plataforma poderia postar no formulário.
+
+**3. Conferir**
+
+Abrir `/diagnostico`, enviar uma resposta e verificar se o card nasceu no
+ClickUp. Apagar o card e a linha depois do teste.
+
 ## Escrita
 
 A antítese curta — afirma uma coisa, nega a outra, ponto final — é a digital

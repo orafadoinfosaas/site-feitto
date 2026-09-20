@@ -1,0 +1,5 @@
+{
+  "//": "As Edge Functions resolvem tudo por URL. Sem isto, o Deno tentaria usar o node_modules do Astro, que é de outro runtime e não tem estas dependências.",
+  "nodeModulesDir": "none",
+  "lock": false
+}

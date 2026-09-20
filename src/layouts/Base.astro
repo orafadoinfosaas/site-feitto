@@ -15,6 +15,10 @@ interface Props {
 }
 
 const { title, description, overlayNav = false, aviso = true, bare = false } = Astro.props;
+
+/* A pré-visualização não pode ser indexada: o Google acharia um segundo site
+   com o mesmo conteúdo, e a cliente poderia cair nele pela busca. */
+const naoIndexar = import.meta.env.PUBLIC_NOINDEX === 'true';
 const current = Astro.url.pathname.replace(/\/$/, '') || '/';
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -36,6 +40,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:locale" content="pt_BR" />
     <meta name="twitter:card" content="summary_large_image" />
 
+    {naoIndexar && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#1C1619" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
 

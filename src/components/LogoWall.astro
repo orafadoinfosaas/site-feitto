@@ -1,0 +1,72 @@
+---
+/**
+ * Faixa de marcas. As reais ainda não chegaram: estas são fictícias, em
+ * estilos deliberadamente diferentes para mostrar como a faixa se comporta
+ * quando os logos tiverem construções variadas.
+ * [PENDENTE] trocar por SVGs vetorizados, normalizados na mesma altura óptica.
+ */
+interface Props { kind: 'autoridade' | 'casos' }
+const { kind } = Astro.props;
+
+const autoridade = [
+  { name: 'MERIDIAN', style: 'ls-wide' },
+  { name: 'Vallera', style: 'serif' },
+  { name: 'NORTE & CO.', style: 'ls-mid' },
+  { name: 'brassari', style: 'thin' },
+  { name: 'KIVEL', style: 'bold' },
+  { name: 'Otávia', style: 'serif-italic' },
+];
+const casos = [
+  { name: 'CALDERA', style: 'ls-wide' },
+  { name: 'Rovena', style: 'serif' },
+  { name: 'PONTO SUL', style: 'ls-mid' },
+  { name: 'alvia', style: 'thin' },
+  { name: 'TERRAZO', style: 'bold' },
+  { name: 'Marés', style: 'serif-italic' },
+];
+const marks = kind === 'autoridade' ? autoridade : casos;
+---
+
+<div class="wall" data-reveal>
+  <ul class="wall__list">
+    {marks.map((m, i) => (
+      <li class:list={['wall__mark', m.style]} data-reveal data-reveal-step={i}>{m.name}</li>
+    ))}
+  </ul>
+  <p class="wall__note">
+    Marcas fictícias · substituir pelos logotipos reais, vetorizados e normalizados
+  </p>
+</div>
+
+<style>
+  .wall__list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.75rem clamp(1.5rem, 4vw, 2.5rem);
+    margin: 0;
+    padding: clamp(1.5rem, 3vw, 1.875rem) 0;
+    list-style: none;
+    border-block: 1px solid var(--hairline);
+  }
+  .wall__mark {
+    color: var(--drift);
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .ls-wide { font-size: clamp(0.875rem, 1.4vw, 1.25rem); font-weight: 400; letter-spacing: 0.3em; }
+  .ls-mid  { font-size: clamp(0.75rem, 1.2vw, 1.0625rem); font-weight: 300; letter-spacing: 0.22em; }
+  .thin    { font-size: clamp(1.125rem, 1.8vw, 1.625rem); font-weight: 200; letter-spacing: -0.01em; }
+  .bold    { font-size: clamp(0.9375rem, 1.5vw, 1.3125rem); font-weight: 500; letter-spacing: 0.14em; }
+  .serif   { font-family: var(--serif); font-size: clamp(1.125rem, 1.8vw, 1.5625rem); font-weight: 400; }
+  .serif-italic { font-family: var(--serif); font-style: italic; font-size: clamp(1.125rem, 1.8vw, 1.5625rem); font-weight: 300; }
+
+  .wall__note {
+    margin-block-start: 0.875rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+</style>

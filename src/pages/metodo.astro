@@ -1,0 +1,648 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionRule from '../components/SectionRule.astro';
+
+const fases = [
+  {
+    n: '01',
+    nome: 'Diagnóstico Profundo',
+    sub: 'DNA Comercial',
+    texto:
+      'Mapeamento dos sabotadores e dos vícios de gestão de quem lidera, com auditoria completa do funil e da operação comercial. A leitura estratégica é feita ao vivo, com você na sala, e não num relatório que chega por e-mail para você interpretar sozinho.',
+    saida: 'O Relatório Estratégico, com os gargalos priorizados e um plano de ação imediata.',
+  },
+  {
+    n: '02',
+    nome: 'Clareza e Reposicionamento',
+    texto:
+      'Construção do posicionamento comercial e alinhamento entre a identidade de quem lidera e a identidade do negócio. É aqui que acaba o abismo entre a qualidade do que você entrega e a forma como o mercado consegue perceber isso.',
+    saida: 'Posicionamento definido e uma mensagem comercial que para de brigar consigo mesma.',
+  },
+  {
+    n: '03',
+    nome: 'Estratégia Comercial',
+    texto:
+      'Arquitetura de oferta, precificação com margem líquida desenhada e desenho do pipeline. Preço deixa de ser achismo e vira decisão de margem.',
+    saida: 'Playbook de vendas e matriz de precificação.',
+  },
+  {
+    n: '04',
+    nome: 'Execução e Performance',
+    texto:
+      'Rotinas, cadências e indicadores, com reuniões de calibragem com a liderança. É a fase que garante que ninguém volte ao ponto de partida seis meses depois.',
+    saida:
+      'Rotina instalada e um painel que responde, em números, se a empresa está indo para onde você decidiu que ela iria.',
+  },
+];
+
+const ciclos = [
+  {
+    nome: 'Inicial',
+    prazo: '3 meses',
+    acontece: 'Fases 1 e 2. A verdade sobre o ponto de partida e o posicionamento definido.',
+    leva: 'Direção. Ainda não é estrutura, e a gente diz isso antes de começar.',
+  },
+  {
+    nome: 'Estruturação',
+    prazo: '6 meses',
+    acontece: 'Fases 1 a 3 e início da 4. Oferta, precificação e pipeline começando a rodar.',
+    leva: 'Estrutura de pé.',
+  },
+  {
+    nome: 'Transformação',
+    prazo: '12 meses',
+    acontece: 'As quatro fases mais consolidação. Rotina instalada e indicadores calibrados.',
+    leva: 'Autonomia. A estrutura funciona sem a nossa presença constante.',
+  },
+];
+
+const perguntas = [
+  {
+    q: 'Meu mercado é muito específico. Isso funciona aqui?',
+    a: 'A metodologia não substitui o que você sabe do seu nicho. Ela é o que permite que esse conhecimento vire critério de decisão em vez de palpite qualificado. A tática muda de setor para setor, a estrutura de uma operação comercial saudável não. Nossos casos vão de ortopedia a seguros, de arquitetura a revestimentos.',
+  },
+  {
+    q: 'Se eu criar processo, vai diluir o padrão que eu construí.',
+    a: 'Estrutura não substitui o seu padrão, ela é o mecanismo que protege e replica esse padrão quando você não está na sala. Hoje ele existe porque você existe, e é exatamente isso que o torna frágil.',
+  },
+  {
+    q: 'Primeiro eu vou entender melhor sozinho.',
+    a: 'Você já tentou sozinho, e é o que praticamente todo cliente relata antes de chegar. Consultar colegas gera opinião, não contraponto, porque eles carregam o mesmo viés. O resultado costuma ser mais dúvida, e não mais critério.',
+  },
+  {
+    q: 'Eu só preciso organizar os números.',
+    a: 'Organizar sem critério só deixa o escuro mais arrumado. A pergunta não é quais números você tem, é quais deles mudam uma decisão sua.',
+  },
+  {
+    q: 'Não tenho tempo agora.',
+    a: 'Você não tem tempo justamente porque opera sem processo. Se nada mudar, daqui a um ano você continua sem tempo, só que com um ano a mais de estrutura consolidada em cima do lugar errado.',
+  },
+  {
+    q: 'Quanto custa?',
+    a: 'O investimento é apresentado depois do diagnóstico, quando já sabemos qual ciclo o seu caso pede. O que dá para adiantar é que o trabalho é mensal, e que o filtro existe justamente para essa conversa só acontecer com quem tem capacidade de sustentá-la.',
+  },
+  {
+    q: 'E se não funcionar para mim?',
+    a: 'Para isso existe a Janela de Alinhamento de trinta dias. Você decide depois de sentir o trabalho, e não antes.',
+  },
+];
+---
+
+<Base
+  title="O método | FEITTO"
+  description="Inteligência Comercial Integrada: quatro fases, três ciclos e uma Janela de Alinhamento de trinta dias. Conselheiro estratégico de fora da sua empresa."
+>
+  <section class="shell abertura">
+    <div class="abertura__left">
+      <p class="eyebrow">A consultoria</p>
+      <h1 class="abertura__title">
+        Um conselheiro estratégico de <em class="key">fora</em> da sua empresa.
+      </h1>
+    </div>
+    <div class="abertura__right">
+      <p class="lede">
+        A FEITTO não é agência, não é treinamento motivacional e não é consultoria financeira. O que
+        a gente faz é ocupar o lugar de contraponto estratégico que fundador nenhum tem dentro de
+        casa.
+      </p>
+      <p class="lede">
+        A gente senta do seu lado para ler o mercado, desenhar margem e definir os poucos indicadores
+        que de fato mudam uma decisão, até que decidir deixe de depender de coragem e passe a
+        depender de critério.
+      </p>
+    </div>
+  </section>
+
+  <section class="shell">
+    <div class="promessa" data-reveal>
+      <p class="promessa__rotulo">A promessa</p>
+      <p class="promessa__txt">
+        Você para de decidir no susto e de crescer no esforço. Passa a ter o mapa da margem, os
+        números que importam e critério suficiente para dizer não.
+      </p>
+    </div>
+  </section>
+
+  <section class="shell section">
+    <SectionRule num="01" label="Do comportamento à execução" />
+    <h2 class="h-section" data-reveal>As quatro fases</h2>
+
+    <ol class="fases">
+      {
+        fases.map((f, i) => (
+          <li class="fase" data-reveal data-reveal-step={i}>
+            <span class="fase__num">FASE {f.n}</span>
+            <div class="fase__nome">
+              <p class="fase__titulo">{f.nome}</p>
+              {f.sub && <p class="fase__sub">{f.sub}</p>}
+            </div>
+            <div class="fase__corpo">
+              <p class="fase__txt">{f.texto}</p>
+              <div class="saida">
+                <p class="saida__rotulo">Você sai com</p>
+                <p class="saida__txt">{f.saida}</p>
+              </div>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="shell section">
+    <SectionRule num="02" label="Duração" />
+    <div class="ciclos__head">
+      <h2 class="h-section" data-reveal>Três ciclos.</h2>
+      <p class="lede" data-reveal data-reveal-step="1">
+        Não existe escada de preço nem desconto por prazo. Entre os ciclos muda a profundidade do
+        trabalho e o que você leva ao final. A recomendação sai do escopo, e não do orçamento.
+      </p>
+    </div>
+
+    <table class="ciclos">
+      <thead>
+        <tr>
+          <th scope="col">Ciclo</th>
+          <th scope="col">O que acontece</th>
+          <th scope="col" class="ciclos__leva">O que você leva</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          ciclos.map((c, i) => (
+            <tr data-reveal data-reveal-step={i}>
+              <th scope="row" class="ciclo__nome">
+                <span class="ciclo__titulo">{c.nome}</span>
+                <span class="ciclo__prazo">{c.prazo}</span>
+              </th>
+              <td class="ciclo__acontece">{c.acontece}</td>
+              <td class="ciclo__leva">{c.leva}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+
+    <p class="ressalva" data-reveal>
+      O valor mensal não aparece em nenhuma página pública. Ele é apresentado depois do diagnóstico,
+      junto com a recomendação de ciclo.
+    </p>
+  </section>
+
+  <section class="janela">
+    <div class="shell">
+      <SectionRule num="03" label="Janela de alinhamento · 30 dias" tone="dark" />
+      <div class="janela__cols">
+        <h2 class="janela__title" data-reveal>
+          Trinta dias para sentir o trabalho antes de ficar preso a ele.
+        </h2>
+        <div class="janela__texto" data-reveal data-reveal-step="1">
+          <p>
+            Nos primeiros trinta dias, contados da primeira sessão, o contrato pode ser encerrado sem
+            qualquer multa rescisória. Você paga apenas o mês em que foi atendido e não deve mais
+            nada.
+          </p>
+          <p>
+            E ela vale para os dois lados. A gente também pode encerrar se entender que não existe
+            fit para a transformação acontecer.
+          </p>
+          <p class="janela__forte">
+            Isso não é concessão comercial, é coerência com o filtro: trabalhar com quem não deveria
+            estar ali custa mais caro do que encerrar.
+          </p>
+          <p class="janela__nota">
+            A janela elimina a multa. Não é devolução do mês trabalhado.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell section">
+    <SectionRule num="04" label="Para quem é, e para quem não é" />
+    <div class="fit">
+      <article class="fit__col" data-reveal>
+        <h2 class="fit__title">É para você se</h2>
+        <p>
+          Você construiu excelência técnica reconhecida, assumiu a responsabilidade de ter um negócio
+          e quer parar de decidir por percepção. Serve tanto para quem já opera e cresce no esforço
+          quanto para quem tem reputação, renda e uma ideia que ainda não virou empresa.
+        </p>
+      </article>
+      <article class="fit__col fit__col--nao" data-reveal data-reveal-step="1">
+        <h2 class="fit__title fit__title--nao">Não é para você se</h2>
+        <p>
+          Você procura um script rápido para o time, uma fórmula pronta ou um resultado que aconteça
+          sem envolver a sua própria liderança. A gente mexe primeiro em como você decide, e quem não
+          quer mexer nisso não deveria começar.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="shell section">
+    <SectionRule num="05" label="Perguntas honestas" />
+    <h2 class="h-section" data-reveal>
+      As objeções morrem aqui, e não na <em class="key">call</em>.
+    </h2>
+
+    <dl class="faq">
+      {
+        perguntas.map((p, i) => (
+          <div class="faq__item" data-reveal data-reveal-step={i}>
+            <dt class="faq__q">“{p.q}”</dt>
+            <dd class="faq__a">{p.a}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <section class="shell section">
+    <div class="cta">
+      <h2 class="h-section" data-reveal>Todo trabalho começa por um diagnóstico.</h2>
+      <div class="cta__right" data-reveal data-reveal-step="1">
+        <p class="lede">
+          É ele que mostra o que está te custando dinheiro agora, e se este é o momento de resolver.
+        </p>
+        <a href="/diagnostico" class="btn btn--solid">Fazer o diagnóstico</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .abertura {
+    display: grid;
+    gap: clamp(2rem, 5vw, 7.5rem);
+    padding-block-start: clamp(3.5rem, 7vw, 6rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .abertura {
+      grid-template-columns: minmax(0, 43.75rem) minmax(0, 1fr);
+    }
+    .abertura__right {
+      padding-block-start: 3.625rem;
+    }
+  }
+  .abertura__title {
+    margin-block-start: 2.125rem;
+    font-size: clamp(2.25rem, 5vw, 3.875rem);
+    line-height: 1.06;
+    letter-spacing: -0.028em;
+  }
+  .abertura__right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .promessa {
+    display: grid;
+    gap: 1.5rem clamp(2rem, 4vw, 3.75rem);
+    margin-block-start: clamp(3rem, 6vw, 5.25rem);
+    padding: clamp(2rem, 4vw, 3.375rem) clamp(1.75rem, 4vw, 3.75rem);
+    background: var(--creme);
+    align-items: center;
+  }
+  @media (min-width: 62rem) {
+    .promessa {
+      grid-template-columns: 7.5rem minmax(0, 1fr);
+    }
+  }
+  .promessa__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+  .promessa__txt {
+    font-family: var(--display);
+    font-weight: 200;
+    font-size: clamp(1.375rem, 2.8vw, 1.875rem);
+    line-height: 1.4;
+    letter-spacing: -0.02em;
+  }
+
+  .h-section {
+    margin-block-start: clamp(2rem, 4vw, 3.125rem);
+    font-size: clamp(2rem, 4.2vw, 3.25rem);
+  }
+
+  /* fases */
+  .fases {
+    margin: clamp(2.25rem, 4vw, 3.5rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .fase {
+    display: grid;
+    gap: 1rem clamp(2rem, 4vw, 4rem);
+    border-block-start: 1px solid var(--hairline);
+    padding-block: clamp(1.75rem, 3vw, 2.5rem);
+  }
+  .fase:first-child {
+    border-color: var(--silver);
+  }
+  .fase:last-child {
+    border-block-end: 1px solid var(--silver);
+  }
+  @media (min-width: 62rem) {
+    .fase {
+      grid-template-columns: 5.75rem 21.25rem minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+  .fase__num {
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    color: var(--drift);
+    padding-block-start: 0.5625rem;
+  }
+  .fase__titulo {
+    font-family: var(--display);
+    font-size: clamp(1.5rem, 2.6vw, 1.875rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .fase__sub {
+    margin-block-start: 0.625rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+  .fase__corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .fase__txt {
+    color: var(--coffee);
+    line-height: 1.8;
+    max-width: var(--measure);
+  }
+  .saida {
+    border-inline-start: 2px solid var(--drift);
+    padding-inline-start: 1.375rem;
+  }
+  .saida__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+    margin-block-end: 0.375rem;
+  }
+  .saida__txt {
+    line-height: 1.6;
+  }
+
+  /* ciclos */
+  .ciclos__head {
+    display: grid;
+    gap: 1.25rem clamp(2rem, 5vw, 7.5rem);
+    align-items: end;
+  }
+  @media (min-width: 62rem) {
+    .ciclos__head {
+      grid-template-columns: minmax(0, 28.75rem) minmax(0, 1fr);
+    }
+  }
+
+  .ciclos {
+    width: 100%;
+    margin-block-start: clamp(2rem, 4vw, 3.25rem);
+    border-collapse: collapse;
+  }
+  .ciclos th[scope='col'] {
+    font-family: var(--sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift);
+    text-align: start;
+    padding-block-end: 1rem;
+    border-block-end: 1px solid var(--silver);
+  }
+  .ciclos__leva {
+    color: var(--coffee);
+  }
+  .ciclos td,
+  .ciclos th[scope='row'] {
+    vertical-align: top;
+    text-align: start;
+    font-weight: 300;
+    padding-block: 1.875rem;
+    padding-inline-end: clamp(1.5rem, 3vw, 3.75rem);
+    border-block-end: 1px solid var(--hairline-soft);
+    line-height: 1.7;
+  }
+  .ciclos tbody tr:last-child td,
+  .ciclos tbody tr:last-child th {
+    border-block-end: 1px solid var(--silver);
+  }
+  .ciclo__nome {
+    width: 18%;
+  }
+  .ciclo__titulo {
+    display: block;
+    font-family: var(--display);
+    font-size: clamp(1.25rem, 2vw, 1.5625rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+  .ciclo__prazo {
+    display: block;
+    margin-block-start: 0.375rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+  .ciclo__acontece {
+    width: 42%;
+    color: var(--coffee);
+  }
+  .ciclo__leva {
+    color: var(--ink);
+  }
+  @media (max-width: 47.999rem) {
+    .ciclos,
+    .ciclos tbody,
+    .ciclos tr,
+    .ciclos td,
+    .ciclos th[scope='row'] {
+      display: block;
+      width: 100%;
+    }
+    .ciclos thead {
+      display: none;
+    }
+    .ciclos tr {
+      border-block-start: 1px solid var(--silver);
+      padding-block: 1.5rem;
+    }
+    .ciclos td,
+    .ciclos th[scope='row'] {
+      border: 0;
+      padding-block: 0.375rem;
+      padding-inline: 0;
+    }
+    .ciclo__leva::before {
+      content: 'Você leva — ';
+      font-size: 0.6875rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--drift);
+    }
+  }
+
+  .ressalva {
+    margin-block-start: 1.75rem;
+    max-width: 51.25rem;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--drift-ink);
+  }
+
+  /* janela */
+  .janela {
+    margin-block-start: clamp(4.5rem, 8vw, 7.25rem);
+    padding-block: clamp(4rem, 7vw, 6.5rem);
+    background: var(--ink);
+    color: var(--silver);
+  }
+  .janela__cols {
+    display: grid;
+    gap: clamp(2rem, 5vw, 7.5rem);
+    margin-block-start: clamp(2.25rem, 4vw, 3.375rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .janela__cols {
+      grid-template-columns: minmax(0, 37.5rem) minmax(0, 1fr);
+    }
+  }
+  .janela__title {
+    font-size: clamp(1.875rem, 3.8vw, 2.875rem);
+    line-height: 1.12;
+    color: var(--alyssum);
+  }
+  .janela__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: var(--measure);
+  }
+  .janela__texto p {
+    line-height: 1.82;
+  }
+  .janela__forte {
+    color: var(--alyssum);
+  }
+  .janela__nota {
+    border-block-start: 1px solid var(--hairline-dark);
+    padding-block-start: 1.125rem;
+    font-size: 0.875rem !important;
+    color: var(--drift);
+  }
+
+  /* fit */
+  .fit {
+    display: grid;
+    gap: clamp(2.5rem, 4vw, 0rem);
+    margin-block-start: clamp(2.25rem, 4vw, 3.25rem);
+  }
+  @media (min-width: 62rem) {
+    .fit {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .fit__col {
+      padding-inline-end: 4.5rem;
+    }
+    .fit__col--nao {
+      border-inline-start: 1px solid var(--silver);
+      padding-inline: 4.5rem 0;
+    }
+  }
+  .fit__col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    color: var(--coffee);
+  }
+  .fit__title {
+    font-size: clamp(1.375rem, 2.4vw, 1.6875rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+  .fit__title--nao {
+    color: var(--drift);
+  }
+  .fit__col--nao p {
+    color: var(--drift-ink);
+  }
+
+  /* faq */
+  .faq {
+    margin: clamp(2.25rem, 4vw, 3.25rem) 0 0;
+  }
+  .faq__item {
+    display: grid;
+    gap: 0.75rem clamp(2rem, 4vw, 4rem);
+    border-block-start: 1px solid var(--hairline);
+    padding-block: 1.875rem;
+  }
+  .faq__item:first-child {
+    border-color: var(--silver);
+  }
+  .faq__item:last-child {
+    border-block-end: 1px solid var(--silver);
+  }
+  @media (min-width: 62rem) {
+    .faq__item {
+      grid-template-columns: minmax(0, 27.5rem) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+  .faq__q {
+    font-family: var(--display);
+    font-size: clamp(1.1875rem, 2vw, 1.375rem);
+    font-weight: 300;
+    line-height: 1.4;
+    letter-spacing: -0.015em;
+  }
+  .faq__a {
+    margin: 0;
+    color: var(--coffee);
+    line-height: 1.8;
+    max-width: var(--measure);
+    padding-block-start: 0.1875rem;
+  }
+
+  /* cta */
+  .cta {
+    display: grid;
+    gap: clamp(1.5rem, 5vw, 7.5rem);
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: clamp(2.5rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .cta {
+      grid-template-columns: minmax(0, 41.25rem) minmax(0, 1fr);
+    }
+  }
+  .cta .h-section {
+    margin-block-start: 0;
+  }
+  .cta__right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.75rem;
+  }
+</style>

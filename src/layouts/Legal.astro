@@ -1,0 +1,273 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+
+export interface Secao {
+  id: string;
+  n: string;
+  titulo: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  eyebrow: string;
+  h1: string;
+  lede: string;
+  vigencia: string;
+  secoes: Secao[];
+  /** aviso de minuta: aparece só em desenvolvimento, nunca no site publicado */
+  minuta?: string;
+}
+
+const { title, description, eyebrow, h1, lede, vigencia, secoes, minuta } = Astro.props;
+---
+
+<Base title={title} description={description} bare>
+  <Logo slot="bare-logo" width={132} />
+
+  {
+    import.meta.env.DEV && minuta && (
+      <div class="minuta">
+        <span class="minuta__rotulo">Nota de trabalho</span>
+        <span>{minuta}</span>
+      </div>
+    )
+  }
+
+  <header class="shell cabeca">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 class="cabeca__title">{h1}</h1>
+    <p class="lede">{lede}</p>
+    <p class="cabeca__vigencia">{vigencia}</p>
+  </header>
+
+  <div class="shell corpo">
+    <nav class="sumario" aria-label="Nesta página">
+      <p class="sumario__rotulo">Nesta página</p>
+      {
+        secoes.map((s) => (
+          <a href={`#${s.id}`}>
+            <span class="sumario__num">{s.n}</span> {s.titulo}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="texto">
+      <slot />
+    </div>
+  </div>
+</Base>
+
+<style>
+  .minuta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1.25rem;
+    padding: 1.125rem var(--gutter);
+    background: var(--coffee);
+    color: var(--creme);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+  .minuta__rotulo {
+    flex-shrink: 0;
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--silver);
+  }
+
+  .cabeca {
+    padding-block-start: clamp(3.5rem, 6vw, 5.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 1.625rem;
+  }
+  .cabeca__title {
+    font-size: clamp(2.25rem, 5vw, 3.875rem);
+    line-height: 1.06;
+    letter-spacing: -0.028em;
+  }
+  .cabeca__vigencia {
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+
+  .corpo {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 6.25rem);
+    padding-block-start: clamp(3rem, 5vw, 4.5rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .corpo {
+      grid-template-columns: 17.5rem minmax(0, 1fr);
+    }
+    .sumario {
+      position: sticky;
+      top: 2.5rem;
+    }
+  }
+
+  .sumario {
+    display: flex;
+    flex-direction: column;
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: 1.375rem;
+  }
+  .sumario__rotulo {
+    margin-block-end: 0.75rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+  .sumario a {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    min-height: 44px;
+    padding-block: 0.5625rem;
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: var(--coffee);
+    transition: color 200ms var(--ease);
+  }
+  .sumario a:hover {
+    color: var(--ink);
+  }
+  .sumario__num {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    color: var(--drift);
+  }
+
+  .texto {
+    max-width: 50rem;
+  }
+</style>
+
+<style is:global>
+  /* estilos do conteúdo jurídico, montado como slot pelas páginas */
+  .lg-sec {
+    border-block-start: 1px solid var(--hairline);
+    padding-block: 1.375rem 2.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+  }
+  .lg-sec:first-child {
+    border-color: var(--silver);
+  }
+  .lg-sec:last-child {
+    border-block-end: 1px solid var(--silver);
+  }
+  .lg-sec__num {
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+  .lg-sec h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .lg-sec p {
+    font-size: 1.0625rem;
+    line-height: 1.85;
+    color: var(--coffee);
+  }
+  .lg-sec a {
+    color: var(--ink);
+    text-decoration: none;
+    border-block-end: 1px solid var(--drift);
+  }
+  .lg-sec strong {
+    font-weight: 400;
+    color: var(--ink);
+  }
+
+  .lg-quadro {
+    border-inline-start: 2px solid var(--drift);
+    padding-inline-start: 1.625rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+  .lg-quadro__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--drift-ink) !important;
+  }
+  .lg-quadro p {
+    font-size: 1rem !important;
+  }
+
+  .lg-lista {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .lg-lista li {
+    border-block-start: 1px solid var(--hairline-soft);
+    padding-block: 0.9375rem;
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--coffee);
+  }
+  .lg-lista li:last-child {
+    border-block-end: 1px solid var(--hairline-soft);
+  }
+
+  .lg-tabela {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .lg-tabela th,
+  .lg-tabela td {
+    text-align: start;
+    vertical-align: top;
+    font-weight: 300;
+    font-size: 1rem;
+    line-height: 1.75;
+    padding-block: 1.125rem;
+    border-block-start: 1px solid var(--hairline-soft);
+  }
+  .lg-tabela tr:last-child th,
+  .lg-tabela tr:last-child td {
+    border-block-end: 1px solid var(--hairline-soft);
+  }
+  .lg-tabela th {
+    width: 16rem;
+    padding-inline-end: 2rem;
+    font-weight: 400;
+    color: var(--ink);
+  }
+  .lg-tabela td {
+    color: var(--coffee);
+  }
+  @media (max-width: 47.999rem) {
+    .lg-tabela,
+    .lg-tabela tbody,
+    .lg-tabela tr,
+    .lg-tabela th,
+    .lg-tabela td {
+      display: block;
+      width: 100%;
+    }
+    .lg-tabela td {
+      border: 0;
+      padding-block: 0 1.125rem;
+    }
+    .lg-tabela th {
+      padding-block-end: 0.25rem;
+    }
+  }
+</style>

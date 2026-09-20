@@ -1,0 +1,313 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import retrato from '../assets/luana-retrato.jpg';
+
+const modo = [
+  {
+    titulo: 'Eu digo o que vejo.',
+    texto:
+      'Inclusive quando é desconfortável, inclusive quando o desconforto é sobre a sua forma de liderar. Você não me contrata para concordar com você. Já tem gente demais fazendo isso.',
+  },
+  {
+    titulo: 'Eu não trabalho com fórmula.',
+    texto:
+      'Cada diagnóstico parte do seu DNA, dos seus números e da sua realidade. Se coubesse num template, você não precisaria de mim.',
+  },
+  {
+    titulo: 'Eu fico.',
+    texto:
+      'Estratégia sem acompanhamento vira pasta esquecida no drive. Eu acompanho a execução até a rotina se sustentar sozinha.',
+  },
+  {
+    titulo: 'Eu escolho.',
+    texto:
+      'A FEITTO atende um número limitado de empresas por semestre, porque profundidade e volume não convivem. A gente escolhe os negócios que vai transformar.',
+  },
+];
+---
+
+<Base
+  title="Quem conduz | FEITTO"
+  description="Luana Feitoza, estrategista comercial de alto padrão e fundadora da FEITTO. Duas décadas em operações comerciais de peso, hoje ocupando a cadeira de conselheiro externo."
+>
+  <section class="shell hero">
+    <div class="hero__texto">
+      <p class="eyebrow">Quem conduz</p>
+      <h1 class="hero__nome">Luana Feitoza</h1>
+      <p class="hero__papel">
+        Estrategista comercial de alto padrão, B2B e B2C. Fundadora da FEITTO.
+      </p>
+      <div class="hero__intro">
+        <p>
+          Passei duas décadas em operações comerciais de peso: Itaú, Fiat, Iguatemi, Deca, Portinari
+          e Ceusa. Liderei equipes, abri mercados que ainda não existiam e carreguei metas em anos
+          ruins.
+        </p>
+        <p>Nesse tempo eu aprendi as coisas que sustentam este trabalho.</p>
+      </div>
+    </div>
+
+    <figure class="hero__retrato" data-reveal>
+      <Image
+        src={retrato}
+        alt="Retrato de Luana Feitoza, de blusa preta, diante de um quadro de pinceladas em tons terrosos"
+        width={960}
+        widths={[480, 720, 960]}
+        sizes="(min-width: 62rem) 34rem, 100vw"
+        format="webp"
+        quality={82}
+        loading="eager"
+      />
+      <figcaption>
+        Em high-ticket a pessoa é o produto. Este é o principal ativo de confiança da página.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="shell section aprendi">
+    <p class="aprendi__rotulo" data-reveal>O que eu aprendi</p>
+    <div class="aprendi__texto">
+      <p data-reveal>
+        A primeira é técnica: o que separa uma empresa que cresce de uma que se cansa quase nunca é o
+        produto, e sim a arquitetura de decisão por trás dele.
+      </p>
+      <p data-reveal data-reveal-step="1">
+        A segunda demorou mais, porque exigiu que eu enxergasse em mim. Meu faro comercial sempre foi
+        bom, bom o bastante para eu confiar nele mais do que devia. Levei anos para entender que o
+        mesmo instinto que me fazia acertar na venda me fazia errar na estrutura. Faro lê o cliente.
+        Não lê margem, não lê concentração de receita, não lê o que vai quebrar daqui a dezoito
+        meses.
+      </p>
+      <p data-reveal data-reveal-step="2">
+        Aí ficou clara a terceira: quase todo dono de negócio que eu encontro é excelente naquilo que
+        faz. Falta alguém do outro lado da mesa que não dependa dele e não tenha medo de dizer o que
+        ele não quer ouvir.
+      </p>
+      <p class="aprendi__remate" data-reveal>
+        É por isso que a FEITTO existe: para ocupar a cadeira que fica vazia em toda empresa liderada
+        por um especialista, a de quem vê o que ninguém de dentro consegue <em class="key">ver</em>.
+      </p>
+    </div>
+  </section>
+
+  <section class="modo">
+    <div class="shell">
+      <div class="rule rule--creme" data-reveal>
+        <span class="rule__num">•</span>
+        <span class="rule__label">Como eu trabalho</span>
+      </div>
+
+      <ul class="modo__lista">
+        {
+          modo.map((m, i) => (
+            <li class="modo__item" data-reveal data-reveal-step={i}>
+              <h2 class="modo__titulo">{m.titulo}</h2>
+              <p class="modo__txt">{m.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="shell section">
+    <blockquote class="voz" data-reveal>
+      <p>
+        “Recomendaria para qualquer profissional que sinta que precisa de direcionamento para
+        crescer. A FEITTO não conduz apenas estratégias. Ela ajuda a organizar o pensamento, reduzir
+        a insegurança das decisões e transformar projetos em realidade.”
+      </p>
+      <footer>Dra. Danila Feitoza · Movê Ortopedia</footer>
+    </blockquote>
+
+    <div class="cta">
+      <h2 class="cta__title" data-reveal>Se fizer sentido, comece pelo diagnóstico.</h2>
+      <div class="cta__right" data-reveal data-reveal-step="1">
+        <p class="lede">Leva cerca de três minutos e sou eu que leio.</p>
+        <a href="/diagnostico" class="btn btn--solid">Fazer o diagnóstico</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 6rem);
+    padding-block-start: clamp(3.5rem, 6vw, 5.75rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .hero {
+      grid-template-columns: minmax(0, 40rem) minmax(0, 1fr);
+    }
+  }
+
+  .hero__nome {
+    margin-block-start: 2rem;
+    font-size: clamp(2.75rem, 6vw, 4.5rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+  }
+  .hero__papel {
+    margin-block-start: 1.625rem;
+    font-size: clamp(1.0625rem, 1.6vw, 1.1875rem);
+    line-height: 1.7;
+    color: var(--coffee);
+  }
+  .hero__intro {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-block-start: 2.75rem;
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: 2.125rem;
+    color: var(--coffee);
+    max-width: var(--measure);
+  }
+  .hero__intro p {
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.85;
+  }
+
+  .hero__retrato {
+    margin: 0;
+  }
+  .hero__retrato :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    object-position: center 22%;
+  }
+  .hero__retrato figcaption {
+    margin-block-start: 0.875rem;
+    font-size: 0.75rem;
+    line-height: 1.6;
+    color: var(--drift-ink);
+  }
+
+  .aprendi {
+    display: grid;
+    gap: 1.5rem clamp(2rem, 5vw, 7.5rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .aprendi {
+      grid-template-columns: 18.75rem minmax(0, 1fr);
+    }
+  }
+  .aprendi__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift);
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: 1.125rem;
+  }
+  .aprendi__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 1.875rem;
+    max-width: 50rem;
+    color: var(--coffee);
+  }
+  .aprendi__texto p {
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+    line-height: 1.85;
+  }
+  .aprendi__remate {
+    margin-block-start: 0.875rem;
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: 2rem;
+    font-family: var(--display);
+    font-weight: 200;
+    font-size: clamp(1.375rem, 2.6vw, 1.75rem) !important;
+    line-height: 1.45;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .modo {
+    margin-block-start: clamp(4.5rem, 8vw, 7.25rem);
+    padding-block: clamp(4rem, 7vw, 6.5rem);
+    background: var(--creme);
+  }
+  .modo__lista {
+    margin: clamp(2rem, 4vw, 3.125rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .modo__item {
+    display: grid;
+    gap: 0.875rem clamp(2rem, 4vw, 4rem);
+    border-block-start: 1px solid var(--creme-rule);
+    padding-block: 2rem;
+  }
+  .modo__item:last-child {
+    border-block-end: 1px solid var(--creme-rule);
+  }
+  @media (min-width: 62rem) {
+    .modo__item {
+      grid-template-columns: minmax(0, 18.75rem) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+  .modo__titulo {
+    font-size: clamp(1.5rem, 2.6vw, 1.875rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .modo__txt {
+    color: var(--coffee);
+    line-height: 1.8;
+    max-width: var(--measure);
+    padding-block-start: 0.375rem;
+  }
+
+  .voz {
+    margin: 0;
+    max-width: 71.25rem;
+  }
+  .voz p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.375rem, 3vw, 2.125rem);
+    line-height: 1.42;
+    letter-spacing: -0.01em;
+  }
+  .voz footer {
+    margin-block-start: 1.625rem;
+    font-family: var(--sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+
+  .cta {
+    display: grid;
+    gap: clamp(1.5rem, 5vw, 7.5rem);
+    margin-block-start: clamp(3rem, 5vw, 4.5rem);
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: clamp(2.5rem, 4vw, 3.25rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .cta {
+      grid-template-columns: minmax(0, 41.25rem) minmax(0, 1fr);
+    }
+  }
+  .cta__title {
+    font-size: clamp(1.875rem, 3.8vw, 3rem);
+  }
+  .cta__right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.625rem;
+  }
+</style>

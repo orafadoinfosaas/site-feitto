@@ -1,0 +1,137 @@
+---
+import Legal, { type Secao } from '../layouts/Legal.astro';
+
+const secoes: Secao[] = [
+  { id: 't1', n: '01', titulo: 'Quem somos' },
+  { id: 't2', n: '02', titulo: 'O que este site é' },
+  { id: 't3', n: '03', titulo: 'Sobre o diagnóstico' },
+  { id: 't4', n: '04', titulo: 'Casos e depoimentos' },
+  { id: 't5', n: '05', titulo: 'Propriedade intelectual' },
+  { id: 't6', n: '06', titulo: 'Disponibilidade e limites' },
+  { id: 't7', n: '07', titulo: 'Lei, foro e contato' },
+];
+
+// [PENDENTE] preencher antes de publicar
+const RAZAO_SOCIAL = '[RAZÃO SOCIAL]';
+const CNPJ = '[CNPJ]';
+const ENDERECO = '[ENDEREÇO]';
+const COMARCA = '[COMARCA]';
+const CONTATO = '[E-MAIL DE CONTATO]';
+---
+
+<Legal
+  title="Termos de Uso | FEITTO"
+  description="Condições de uso do site da FEITTO: o que o conteúdo é, o que o diagnóstico não é, propriedade intelectual e limites de responsabilidade."
+  eyebrow="Condições de uso do site"
+  h1="Termos de Uso"
+  lede="Ao navegar por aqui você concorda com o que está escrito abaixo. São poucas regras, e todas estão em português."
+  vigencia="Versão 1 · vigente desde [DATA DE PUBLICAÇÃO]"
+  secoes={secoes}
+  minuta="Minuta. Precisa da revisão do advogado da FEITTO e dos dados entre colchetes. Esta faixa só aparece em desenvolvimento."
+>
+  <section class="lg-sec" id="t1">
+    <p class="lg-sec__num">01</p>
+    <h2>Quem somos</h2>
+    <p>
+      Este site é mantido por {RAZAO_SOCIAL}, CNPJ {CNPJ}, com sede em {ENDERECO}, que atua sob a
+      marca FEITTO prestando consultoria em inteligência comercial.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="t2">
+    <p class="lg-sec__num">02</p>
+    <h2>O que este site é</h2>
+    <p>
+      Um material informativo sobre o trabalho da FEITTO. O conteúdo publicado aqui tem caráter geral
+      e não configura consultoria prestada, parecer técnico nem recomendação para o seu caso
+      específico. Qualquer decisão de negócio que você tome a partir da leitura é sua.
+    </p>
+    <p>
+      Nada do que está publicado constitui proposta comercial vinculante. Escopo, prazo e valor são
+      definidos caso a caso, por contrato assinado entre as partes.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="t3">
+    <p class="lg-sec__num">03</p>
+    <h2>Sobre o diagnóstico</h2>
+    <p>
+      O formulário de diagnóstico é gratuito e serve para a FEITTO avaliar se existe encaixe entre o
+      seu momento e o método. Preencher não gera obrigação de contratar para você, nem obrigação de
+      atender para a gente.
+    </p>
+    <p>
+      Ao enviar, você declara que as informações são verdadeiras e que tem autoridade para falar pela
+      empresa que representa. A leitura que a gente devolve é uma primeira impressão sobre o que você
+      contou, e não um diagnóstico técnico completo do negócio.
+    </p>
+    <p>
+      O tratamento dos dados que você envia está descrito na
+      <a href="/politica-de-privacidade">Política de Privacidade</a>.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="t4">
+    <p class="lg-sec__num">04</p>
+    <h2>Casos e depoimentos</h2>
+    <p>
+      Os casos e as falas publicadas aqui são reais e estão no ar com autorização de uso das pessoas
+      e das empresas citadas. Eles descrevem o que aconteceu naqueles contextos específicos.
+    </p>
+    <p>
+      São referências de campo, e não promessa de resultado. Resultado em consultoria depende do
+      mercado, da execução e do envolvimento de quem lidera, e por isso a FEITTO não garante que
+      números semelhantes aconteçam no seu negócio.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="t5">
+    <p class="lg-sec__num">05</p>
+    <h2>Propriedade intelectual</h2>
+    <p>
+      A marca FEITTO, o logotipo, a identidade visual, os textos, a metodologia Inteligência
+      Comercial Integrada e os materiais deste site pertencem à FEITTO ou foram licenciados para ela.
+    </p>
+    <p>
+      Você pode ler, citar trechos com atribuição e compartilhar os links. Não pode copiar,
+      reproduzir, adaptar ou explorar comercialmente o conteúdo sem autorização por escrito. As
+      marcas de terceiros citadas pertencem aos respectivos titulares e aparecem apenas como
+      referência.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="t6">
+    <p class="lg-sec__num">06</p>
+    <h2>Disponibilidade e limites</h2>
+    <p>
+      A gente faz o que está ao alcance para manter o site no ar e correto, mas não garante
+      funcionamento ininterrupto nem ausência de erros. Manutenção, falha de terceiros e caso
+      fortuito podem tirar o site do ar temporariamente.
+    </p>
+    <p>
+      Este site pode conter links para páginas de terceiros. A gente não controla nem responde pelo
+      conteúdo delas.
+    </p>
+    <p>
+      Nos limites da lei, a FEITTO não responde por perdas decorrentes do uso ou da impossibilidade
+      de uso deste site, nem por decisões tomadas apenas com base no conteúdo publicado. Também é
+      proibido usar o site para fins ilícitos, tentar violar a segurança dele ou extrair conteúdo de
+      forma automatizada sem autorização.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="t7">
+    <p class="lg-sec__num">07</p>
+    <h2>Lei, foro e contato</h2>
+    <p>
+      Estes termos podem mudar. Quando isso acontecer, a data de vigência no topo muda junto, e
+      continuar navegando significa aceitar a versão nova.
+    </p>
+    <p>
+      Aplica-se a lei brasileira. Fica eleito o foro da comarca de {COMARCA} para resolver o que não
+      for resolvido de forma amigável, ressalvado o direito do consumidor de escolher o foro do seu
+      domicílio.
+    </p>
+    <p>Fale com a gente em <strong>{CONTATO}</strong>.</p>
+  </section>
+</Legal>

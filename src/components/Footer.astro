@@ -1,0 +1,138 @@
+---
+import Logo from './Logo.astro';
+import { site, nav } from '../lib/site';
+---
+
+<footer class="foot">
+  <div class="foot__top">
+    <div class="foot__brand">
+      <Logo width={180} />
+      <p class="foot__signature">{site.assinatura}</p>
+    </div>
+
+    <div class="foot__cols">
+      <div class="foot__col">
+        <h2 class="foot__head">Navegação</h2>
+        <a href="/">Início</a>
+        {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+      </div>
+
+      <div class="foot__col">
+        <h2 class="foot__head">Contato</h2>
+        <a href="/diagnostico">Fazer o diagnóstico</a>
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+        {site.instagram && <a href={site.instagram} rel="me noopener">Instagram</a>}
+        {site.linkedin && <a href={site.linkedin} rel="me noopener">LinkedIn</a>}
+      </div>
+
+      <div class="foot__col">
+        <h2 class="foot__head">Legal</h2>
+        <a href="/politica-de-privacidade">Política de privacidade</a>
+        <a href="/termos-de-uso">Termos de uso</a>
+        <button type="button" data-open-consent>Preferências de cookies</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot__base">
+    <span>FEITTO. · {site.categoria}</span>
+    <span>{site.fecho}</span>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    margin-block-start: clamp(4.5rem, 9vw, 8rem);
+    padding: clamp(3.5rem, 6vw, 5.5rem) var(--gutter) 3rem;
+    background: var(--ink);
+    color: var(--silver);
+  }
+
+  .foot__top {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+  @media (min-width: 60rem) {
+    .foot__top {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 5rem;
+    }
+  }
+
+  .foot__brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1.625rem;
+    color: var(--creme);
+  }
+
+  .foot__signature {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.25rem, 2vw, 1.5rem);
+    line-height: 1.4;
+    color: var(--alyssum);
+  }
+
+  .foot__cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, auto));
+    gap: 2.5rem clamp(2.5rem, 5vw, 5.5rem);
+  }
+
+  .foot__col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .foot__head {
+    font-family: var(--sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--drift);
+    margin-block-end: 0.75rem;
+    letter-spacing: 0.22em;
+  }
+
+  .foot__col a,
+  .foot__col button {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.625rem 0;
+    font-family: var(--sans);
+    font-size: 0.9375rem;
+    font-weight: 300;
+    text-align: start;
+    text-decoration: none;
+    color: var(--silver);
+    background: none;
+    border: 0;
+    cursor: pointer;
+    transition: color 200ms var(--ease);
+  }
+  .foot__col a:hover,
+  .foot__col button:hover {
+    color: var(--alyssum);
+  }
+
+  .foot__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-block-start: 3.5rem;
+    border-block-start: 1px solid var(--coffee);
+    padding-block-start: 1.5rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+</style>

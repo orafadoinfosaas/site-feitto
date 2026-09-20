@@ -1,0 +1,301 @@
+---
+import { Image } from 'astro:assets';
+import Logo from '../components/Logo.astro';
+import { site } from '../lib/site';
+import '../styles/global.css';
+import retrato from '../assets/luana-sorriso.jpg';
+
+/**
+ * Página de bio. Não usa o layout Base: aqui não há menu, rodapé longo nem
+ * scroll de leitura — é um destino de um toque só, vindo do Instagram.
+ */
+const canonical = new URL('/links', Astro.site);
+---
+
+<!doctype html>
+<html lang="pt-BR" class="no-js">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FEITTO | Luana Feitoza</title>
+    <meta
+      name="description"
+      content="Inteligência comercial para quem é excelente na própria área e hoje toca uma empresa. Comece pelo diagnóstico."
+    />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="noindex, follow" />
+    <meta name="theme-color" content="#1C1619" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="/fonts/Author-ExtraLight.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,300;1,300&family=Outfit:wght@200;300;400&display=swap"
+    />
+    <script is:inline>
+      document.documentElement.classList.remove('no-js');
+    </script>
+  </head>
+
+  <body class="bio">
+    <header class="capa">
+      <div class="capa__media">
+        <Image
+          src={retrato}
+          alt="Luana Feitoza, fundadora da FEITTO"
+          width={1040}
+          widths={[480, 780, 1040]}
+          sizes="(min-width: 34rem) 34rem, 100vw"
+          format="webp"
+          quality={82}
+          loading="eager"
+        />
+      </div>
+      <div class="capa__logo"><Logo width={122} /></div>
+    </header>
+
+    <section class="quem">
+      <h1 class="quem__nome">Luana Feitoza</h1>
+      <p class="quem__txt">
+        Trabalho com quem é excelente na própria área e hoje toca uma empresa sem nunca ter sido
+        preparado para isso. Vinte anos lendo operação comercial de alto padrão.
+      </p>
+    </section>
+
+    <nav class="links" aria-label="Links">
+      <a href="/diagnostico" class="link link--destaque">
+        <span>
+          <span class="link__titulo">Fazer o diagnóstico</span>
+          <span class="link__nota">Três minutos. Eu leio pessoalmente.</span>
+        </span>
+        <span class="link__seta" aria-hidden="true">→</span>
+      </a>
+
+      <a href="/metodo" class="link">
+        <span class="link__titulo">Conhecer o método</span>
+        <span class="link__seta" aria-hidden="true">→</span>
+      </a>
+      <a href="/casos" class="link">
+        <span class="link__titulo">Ler os casos</span>
+        <span class="link__seta" aria-hidden="true">→</span>
+      </a>
+      <a href="/quem-conduz" class="link">
+        <span class="link__titulo">Quem conduz</span>
+        <span class="link__seta" aria-hidden="true">→</span>
+      </a>
+
+      <div class="secundarios">
+        {
+          site.whatsapp && (
+            <a href={site.whatsapp} class="sec">
+              <span>Falar no WhatsApp</span>
+              <span class="sec__tag">Direto</span>
+            </a>
+          )
+        }
+        <a href={`mailto:${site.email}`} class="sec">
+          <span>{site.email}</span>
+          <span class="sec__tag">E-mail</span>
+        </a>
+        {
+          site.instagram && (
+            <a href={site.instagram} rel="me noopener" class="sec">
+              <span>Instagram</span>
+              <span class="sec__tag">Perfil</span>
+            </a>
+          )
+        }
+        {
+          site.linkedin && (
+            <a href={site.linkedin} rel="me noopener" class="sec">
+              <span>LinkedIn</span>
+              <span class="sec__tag">Perfil</span>
+            </a>
+          )
+        }
+      </div>
+    </nav>
+
+    <footer class="rodape">
+      <p class="rodape__assinatura">{site.assinatura}</p>
+      <p class="rodape__marca">FEITTO. · {site.categoria}</p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .bio {
+    max-width: 34rem;
+    margin-inline: auto;
+    background: var(--alyssum);
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .capa {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    min-height: 20.625rem;
+    background: var(--ink);
+    isolation: isolate;
+  }
+  .capa__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .capa__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 18%;
+  }
+  /* máscara de legibilidade sobre a fotografia */
+  .capa::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      to bottom,
+      rgb(28 22 25 / 0.2) 0%,
+      rgb(28 22 25 / 0.5) 60%,
+      var(--ink) 100%
+    );
+  }
+  .capa__logo {
+    padding: 0 1.625rem 1.625rem;
+    color: var(--alyssum);
+  }
+
+  .quem {
+    padding: 0 1.625rem 2.25rem;
+    background: var(--ink);
+    color: var(--silver);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .quem__nome {
+    font-family: var(--display);
+    font-weight: 200;
+    font-size: 1.6875rem;
+    letter-spacing: -0.02em;
+    color: var(--alyssum);
+  }
+  .quem__txt {
+    font-size: 0.9375rem;
+    line-height: 1.75;
+  }
+
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 2rem 1.625rem 0;
+    flex-grow: 1;
+  }
+
+  .link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 44px;
+    padding: 1.3125rem 1.5rem;
+    text-decoration: none;
+    color: var(--ink);
+    border: 1px solid var(--silver);
+    transition: background-color 240ms var(--ease), border-color 240ms var(--ease);
+  }
+  .link:hover {
+    border-color: var(--ink);
+  }
+  .link__titulo {
+    display: block;
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .link__seta {
+    flex-shrink: 0;
+    font-size: 1.0625rem;
+    color: var(--drift);
+  }
+
+  .link--destaque {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--alyssum);
+    align-items: flex-start;
+  }
+  .link--destaque:hover {
+    background: var(--coffee);
+    border-color: var(--coffee);
+  }
+  .link--destaque .link__seta {
+    color: var(--alyssum);
+  }
+  .link__nota {
+    display: block;
+    margin-block-start: 0.4375rem;
+    font-size: 0.8125rem;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--silver);
+  }
+
+  .secundarios {
+    margin-block-start: 0.875rem;
+    border-block-start: 1px solid var(--hairline);
+    padding-block-start: 0.5rem;
+  }
+  .sec {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    min-height: 44px;
+    padding-block: 0.875rem;
+    font-size: 0.9375rem;
+    text-decoration: none;
+    color: var(--coffee);
+    border-block-end: 1px solid var(--hairline-soft);
+  }
+  .sec:last-child {
+    border-block-end: 0;
+  }
+  .sec:hover {
+    color: var(--ink);
+  }
+  .sec__tag {
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+
+  .rodape {
+    margin-block-start: 2rem;
+    padding: 1.875rem 1.625rem 2rem;
+    border-block-start: 1px solid var(--hairline);
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .rodape__assinatura {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 1.0625rem;
+  }
+  .rodape__marca {
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+</style>

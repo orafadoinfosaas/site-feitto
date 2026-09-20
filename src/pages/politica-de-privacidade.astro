@@ -1,0 +1,224 @@
+---
+import Legal, { type Secao } from '../layouts/Legal.astro';
+
+const secoes: Secao[] = [
+  { id: 's1', n: '01', titulo: 'Quem é responsável' },
+  { id: 's2', n: '02', titulo: 'Quais dados a gente coleta' },
+  { id: 's3', n: '03', titulo: 'Para que a gente usa' },
+  { id: 's4', n: '04', titulo: 'Com que base legal' },
+  { id: 's5', n: '05', titulo: 'Com quem compartilhamos' },
+  { id: 's6', n: '06', titulo: 'Por quanto tempo guardamos' },
+  { id: 's7', n: '07', titulo: 'Os seus direitos' },
+  { id: 's8', n: '08', titulo: 'Segurança e cookies' },
+  { id: 's9', n: '09', titulo: 'Mudanças e contato' },
+];
+
+// [PENDENTE] preencher antes de publicar
+const RAZAO_SOCIAL = '[RAZÃO SOCIAL]';
+const CNPJ = '[CNPJ]';
+const ENDERECO = '[ENDEREÇO]';
+const ENCARREGADO = '[E-MAIL DO ENCARREGADO]';
+const RETENCAO = '[24 MESES]';
+---
+
+<Legal
+  title="Política de Privacidade | FEITTO"
+  description="Quais dados a FEITTO recebe neste site, o que faz com eles e como você pede para parar. Conforme a Lei 13.709/2018."
+  eyebrow="Lei 13.709/2018 · LGPD"
+  h1="Política de Privacidade"
+  lede="Este texto explica quais dados a FEITTO recebe de você neste site, o que a gente faz com eles e como você manda parar. Está escrito para ser lido, e não para ser assinado às cegas."
+  vigencia="Versão 1 · vigente desde [DATA DE PUBLICAÇÃO]"
+  secoes={secoes}
+  minuta="Minuta redigida sobre a LGPD e sobre o que este site de fato coleta. Precisa da revisão do advogado da FEITTO e dos dados entre colchetes. Esta faixa só aparece em desenvolvimento."
+>
+  <section class="lg-sec" id="s1">
+    <p class="lg-sec__num">01</p>
+    <h2>Quem é responsável pelos seus dados</h2>
+    <p>
+      A controladora é {RAZAO_SOCIAL}, inscrita no CNPJ sob o nº {CNPJ}, com sede em {ENDERECO}. É
+      ela quem decide o que é feito com as informações que você deixa aqui.
+    </p>
+    <p>
+      Para qualquer assunto de privacidade, inclusive para exercer os direitos listados no item 07, o
+      canal é <strong>{ENCARREGADO}</strong>.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="s2">
+    <p class="lg-sec__num">02</p>
+    <h2>Quais dados a gente coleta</h2>
+    <p>Nada é coletado de forma escondida. Existem dois momentos em que a gente recebe informação sua.</p>
+
+    <div class="lg-quadro">
+      <p class="lg-quadro__rotulo">Quando você preenche o diagnóstico</p>
+      <p>
+        Nome, empresa, site ou Instagram, WhatsApp e e-mail. Depois, as respostas sobre o seu momento
+        de negócio, o processo comercial, a sua rotina como líder, o porte da operação e a urgência.
+      </p>
+      <p>
+        Duas dessas perguntas são sensíveis do ponto de vista comercial: a faixa de faturamento da
+        empresa e, para quem ainda está estruturando o negócio, a faixa de renda pessoal. Elas
+        existem porque sem elas não dá para dizer com honestidade se o trabalho cabe no seu momento.
+        São faixas, nunca valores exatos, e não são compartilhadas com ninguém fora da FEITTO.
+      </p>
+    </div>
+
+    <div class="lg-quadro">
+      <p class="lg-quadro__rotulo">Quando você apenas navega</p>
+      <p>
+        Endereço de IP, tipo de navegador e dispositivo, páginas visitadas e por onde você chegou.
+        Essa coleta só acontece se você aceitar os cookies de análise. Se recusar, o site funciona
+        igual e nada disso é registrado.
+      </p>
+    </div>
+  </section>
+
+  <section class="lg-sec" id="s3">
+    <p class="lg-sec__num">03</p>
+    <h2>Para que a gente usa</h2>
+    <p>
+      As respostas do diagnóstico servem para ler o seu caso e decidir se existe encaixe entre o seu
+      momento e o nosso método. Havendo encaixe, servem também para preparar a primeira conversa e
+      para o contato comercial pelo WhatsApp ou e-mail que você deixou.
+    </p>
+    <p>
+      Os dados de navegação servem para entender quais conteúdos são lidos e por onde as pessoas
+      chegam, sempre de forma agregada, e para medir anúncios caso você tenha aceitado os cookies de
+      marketing.
+    </p>
+    <p>
+      A FEITTO não vende, aluga nem cede os seus dados para terceiros usarem por conta própria, e não
+      usa as suas respostas como exemplo público sem autorização assinada.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="s4">
+    <p class="lg-sec__num">04</p>
+    <h2>Com que base legal</h2>
+    <table class="lg-tabela">
+      <tbody>
+        <tr>
+          <th scope="row">Consentimento</th>
+          <td>Art. 7º, I. Cobre o envio do diagnóstico e os cookies de análise e de marketing.</td>
+        </tr>
+        <tr>
+          <th scope="row">Medidas pré-contratuais</th>
+          <td>
+            Art. 7º, V. Cobre a análise do seu caso e a conversa que antecede uma eventual
+            contratação.
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">Legítimo interesse</th>
+          <td>
+            Art. 7º, IX. Cobre a segurança do site e os cookies estritamente necessários para ele
+            funcionar.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="lg-sec" id="s5">
+    <p class="lg-sec__num">05</p>
+    <h2>Com quem compartilhamos</h2>
+    <p>
+      Só com fornecedores que a FEITTO usa para operar, e apenas no que cada um precisa para fazer o
+      serviço dele. Hoje são a hospedagem do site, o serviço de e-mail, a ferramenta de gestão onde o
+      seu caso fica registrado e, mediante o seu aceite, as ferramentas de análise e de anúncios.
+      Todos agem como operadores e seguem as nossas instruções.
+    </p>
+    <p>
+      Parte desses fornecedores mantém servidores fora do Brasil, o que caracteriza transferência
+      internacional de dados nos termos do art. 33 da LGPD. A gente só contrata quem oferece
+      garantias contratuais de proteção equivalentes às exigidas aqui.
+    </p>
+    <p>
+      Também compartilhamos se uma autoridade competente determinar, e nesse caso avisamos você
+      sempre que a lei permitir.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="s6">
+    <p class="lg-sec__num">06</p>
+    <h2>Por quanto tempo guardamos</h2>
+    <p>
+      Respostas de diagnóstico sem contratação ficam por até {RETENCAO} e depois são apagadas. Se
+      virar contrato, os dados ficam pelo prazo da relação e pelo período exigido por lei depois
+      dela, principalmente pela legislação fiscal.
+    </p>
+    <p>
+      O registro do seu consentimento de cookies fica guardado por seis meses, que é o prazo em que a
+      gente pergunta de novo. Você pode pedir a exclusão antes disso a qualquer momento.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="s7">
+    <p class="lg-sec__num">07</p>
+    <h2>Os seus direitos</h2>
+    <p>O art. 18 da LGPD te dá uma lista de direitos, e todos valem aqui. Você pode pedir para:</p>
+    <ul class="lg-lista">
+      <li>Confirmar se a gente trata dados seus e acessar o que existe.</li>
+      <li>Corrigir o que estiver incompleto, desatualizado ou errado.</li>
+      <li>Pedir a anonimização, o bloqueio ou a eliminação do que for desnecessário ou excessivo.</li>
+      <li>Pedir a portabilidade para outro fornecedor.</li>
+      <li>Revogar o consentimento, o que interrompe o tratamento que dependia dele.</li>
+      <li>Saber com quem a gente compartilhou e se opor a algum tratamento.</li>
+    </ul>
+    <p>
+      Escreva para <strong>{ENCARREGADO}</strong>. A gente responde em até 15 dias e não cobra nada
+      por isso. Pode ser que a gente peça uma confirmação de identidade antes, para não entregar os
+      seus dados à pessoa errada.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="s8">
+    <p class="lg-sec__num">08</p>
+    <h2>Segurança e cookies</h2>
+    <p>
+      O site roda sobre conexão criptografada, o acesso às respostas é restrito a quem precisa delas
+      dentro da FEITTO e os fornecedores são escolhidos também por esse critério. Nenhum sistema é
+      infalível, então se acontecer um incidente relevante a gente comunica você e a ANPD, como manda
+      o art. 48.
+    </p>
+    <p>
+      Sobre cookies: os necessários mantêm a sessão, a segurança e a sua própria escolha de
+      preferências. Os de análise e os de marketing só são ativados depois que você aceita, e nenhum
+      script de terceiro carrega antes disso. Dá para mudar a qualquer momento pelo botão
+      <button type="button" class="lg-inline" data-open-consent>Preferências de cookies</button>, no
+      rodapé de todas as páginas. Recusar não tira nenhum conteúdo do ar para você.
+    </p>
+  </section>
+
+  <section class="lg-sec" id="s9">
+    <p class="lg-sec__num">09</p>
+    <h2>Mudanças e contato</h2>
+    <p>
+      Este site não é direcionado a menores de 18 anos e a gente não coleta dados de crianças e
+      adolescentes de propósito. Se isso acontecer por engano, escreva para o contato abaixo que a
+      gente apaga.
+    </p>
+    <p>
+      Quando esta política mudar de forma relevante, a data de vigência lá em cima muda junto e o
+      aviso de cookies volta a aparecer, para você escolher de novo com o texto novo à vista.
+    </p>
+    <p>
+      Dúvida, pedido ou reclamação: <strong>{ENCARREGADO}</strong>. Você também pode levar o caso à
+      Autoridade Nacional de Proteção de Dados.
+    </p>
+  </section>
+</Legal>
+
+<style is:global>
+  .lg-inline {
+    font-family: var(--sans);
+    font-size: inherit;
+    font-weight: 300;
+    color: var(--ink);
+    background: none;
+    border: 0;
+    border-block-end: 1px solid var(--drift);
+    padding: 0;
+    cursor: pointer;
+  }
+</style>

@@ -1,0 +1,795 @@
+---
+import Base from '../layouts/Base.astro';
+import Logo from '../components/Logo.astro';
+
+/**
+ * Filtro de entrada. Nem valor nem prazo aparecem aqui: a capacidade de
+ * investir é lida pelos blocos 05 e 06, e o compromisso pelo bloco 07.
+ */
+
+type Campo =
+  | { tipo: 'texto'; id: string; label: string; input?: 'tel' | 'email' | 'text'; obrigatorio?: boolean }
+  | { tipo: 'longo'; id: string; label: string }
+  | { tipo: 'escolha'; id: string; label: string; opcoes: string[]; obrigatorio?: boolean };
+
+interface Bloco {
+  n: string;
+  nome: string;
+  campos: Campo[];
+}
+
+const blocos: Bloco[] = [
+  {
+    n: '01',
+    nome: 'Quem é você',
+    campos: [
+      { tipo: 'texto', id: 'nome', label: 'Nome completo', obrigatorio: true },
+      { tipo: 'texto', id: 'empresa', label: 'Empresa e site ou Instagram' },
+      { tipo: 'texto', id: 'whatsapp', label: 'WhatsApp', input: 'tel', obrigatorio: true },
+      { tipo: 'texto', id: 'email', label: 'E-mail', input: 'email', obrigatorio: true },
+      {
+        tipo: 'escolha',
+        id: 'chegada',
+        label: 'Como você chegou até a FEITTO?',
+        opcoes: ['Indicação de alguém', 'Instagram', 'LinkedIn', 'Busca no Google', 'Outro'],
+      },
+      { tipo: 'texto', id: 'indicou', label: 'Se foi indicação, de quem?' },
+      {
+        tipo: 'escolha',
+        id: 'papel',
+        label: 'Qual o seu papel na empresa?',
+        opcoes: [
+          'Sou fundador(a) ou sócio(a) e decido sobre investimentos',
+          'Sou da liderança e influencio, mas não decido sozinho',
+          'Sou de outra área ou estou pesquisando para alguém',
+        ],
+      },
+      {
+        tipo: 'escolha',
+        id: 'momento',
+        label: 'Qual é o seu momento?',
+        opcoes: [
+          'Tenho uma empresa em operação, com faturamento recorrente',
+          'Estou estruturando um negócio novo ou em transição de carreira',
+        ],
+        obrigatorio: true,
+      },
+      {
+        tipo: 'escolha',
+        id: 'segmento',
+        label: 'Em que segmento você atua, ou vai atuar?',
+        opcoes: [
+          'Serviços profissionais B2B',
+          'Saúde',
+          'Arquitetura, engenharia ou construção',
+          'Comunicação, marketing ou educação',
+          'Varejo especializado ou alto padrão',
+          'Indústria ou distribuição',
+          'Outro',
+        ],
+      },
+    ],
+  },
+  {
+    n: '02',
+    nome: 'O momento do negócio',
+    campos: [
+      {
+        tipo: 'escolha',
+        id: 'frase',
+        label: 'Qual frase descreve melhor onde você está hoje?',
+        opcoes: [
+          'Tenho bom produto e bom atendimento, mas as vendas não acompanham',
+          'Cresci, mas o negócio depende demais da minha execução individual',
+          'Vendo bem, mas de forma imprevisível',
+          'Sinto que estou patinando: muito movimento e pouco avanço',
+          'Tenho a ideia e a reputação, mas o negócio ainda não saiu do papel',
+          'Está tudo estruturado e previsível, quero apenas otimizar pontos',
+        ],
+      },
+      { tipo: 'longo', id: 'obstaculo', label: 'Qual é hoje o maior obstáculo para o crescimento do seu negócio?' },
+      { tipo: 'longo', id: 'adiando', label: 'Qual decisão importante você sabe que precisa tomar e vem adiando?' },
+    ],
+  },
+  {
+    n: '03',
+    nome: 'Seu comercial hoje',
+    campos: [
+      {
+        tipo: 'escolha',
+        id: 'processo',
+        label: 'Como você descreveria seu processo de vendas atual?',
+        opcoes: [
+          'Depende do talento individual de cada vendedor',
+          'Vive de indicações e da minha rede pessoal',
+          'Temos processo, mas sem previsibilidade de crescimento',
+          'Temos processo, metas e previsibilidade consolidados',
+        ],
+      },
+      {
+        tipo: 'escolha',
+        id: 'contrataria',
+        label:
+          'Você contrataria uma consultoria hoje sabendo que a estruturação começa pela liderança e pela cultura, e não por scripts prontos?',
+        opcoes: [
+          'Sim, é exatamente isso que eu procuro',
+          'Talvez, preciso entender melhor a profundidade',
+          'Não, o que eu quero é técnica rápida para o time',
+        ],
+      },
+    ],
+  },
+  {
+    n: '04',
+    nome: 'Sua rotina como líder',
+    campos: [
+      {
+        tipo: 'escolha',
+        id: 'rotina',
+        label: 'Como você descreveria sua rotina?',
+        opcoes: [
+          'Apago incêndios o tempo todo',
+          'Centralizo decisões para manter controle',
+          'Domino o cenário atual, mas me sinto travado para expandir',
+          'Rotina organizada, delego com tranquilidade',
+        ],
+      },
+      {
+        tipo: 'escolha',
+        id: 'antes',
+        label: 'Você já contratou consultoria ou treinamento comercial antes?',
+        opcoes: [
+          'Sim, entregaram um diagnóstico e sumiram. Nada mudou',
+          'Sim, ajudou parcialmente',
+          'Nunca contratei',
+          'Sim, e resolveu. Não preciso de mais nada',
+        ],
+      },
+    ],
+  },
+  {
+    n: '05',
+    nome: 'Estrutura e capacidade',
+    campos: [
+      {
+        tipo: 'escolha',
+        id: 'faturamento',
+        label: 'Se você já tem empresa em operação: faturamento médio mensal',
+        opcoes: [
+          'Até R$ 30 mil',
+          'R$ 30 mil a R$ 50 mil',
+          'R$ 50 mil a R$ 200 mil',
+          'R$ 200 mil a R$ 1 milhão',
+          'Acima de R$ 1 milhão',
+          'Ainda não tenho empresa em operação',
+        ],
+      },
+      {
+        tipo: 'escolha',
+        id: 'renda',
+        label: 'Se o negócio ainda está sendo estruturado: sua renda pessoal média mensal hoje',
+        opcoes: [
+          'Até R$ 30 mil',
+          'R$ 30 mil a R$ 60 mil',
+          'Acima de R$ 60 mil',
+          'Não se aplica, já tenho empresa faturando',
+        ],
+      },
+      {
+        tipo: 'escolha',
+        id: 'equipe',
+        label: 'Quantas pessoas compõem sua equipe hoje?',
+        opcoes: ['Apenas eu', '2 a 5 pessoas', '6 a 15 pessoas', 'Mais de 15 pessoas'],
+      },
+    ],
+  },
+  {
+    n: '06',
+    nome: 'Custo e urgência',
+    campos: [
+      {
+        tipo: 'texto',
+        id: 'mesa',
+        label:
+          'Quanto você estima ter deixado na mesa nos últimos doze meses por falta de uma operação comercial previsível?',
+      },
+      {
+        tipo: 'escolha',
+        id: 'prazo',
+        label: 'Em quanto tempo você quer que a mudança comece?',
+        opcoes: ['Agora, é prioridade', 'Nos próximos 1 a 3 meses', 'Ainda estou pesquisando'],
+      },
+    ],
+  },
+];
+
+const compromisso = [
+  'Sim, é o tipo de trabalho que eu procuro',
+  'Talvez, preciso entender melhor a profundidade',
+  'Não é o momento',
+];
+---
+
+<Base
+  title="Diagnóstico | FEITTO"
+  description="Três minutos para saber se faz sentido. Um filtro que funciona nos dois sentidos, lido pessoalmente pela Luana Feitoza."
+  bare
+>
+  <Logo slot="bare-logo" width={132} />
+
+  <section class="shell abertura">
+    <div class="abertura__left">
+      <p class="eyebrow">Diagnóstico de Inteligência Comercial</p>
+      <h1 class="abertura__title">
+        Três minutos para saber se <em class="key">faz sentido</em>.
+      </h1>
+      <p class="lede">
+        A FEITTO trabalha com um número limitado de empresas por semestre. Este formulário existe
+        para a gente entender, com honestidade, se o seu momento e o nosso método se encontram.
+      </p>
+      <p class="lede">Responda com sinceridade, porque é dela que sai uma leitura que presta.</p>
+    </div>
+
+    <aside class="nota" data-reveal>
+      <p class="nota__rotulo">Antes de você começar</p>
+      <p>
+        O que você escrever aqui é lido só por mim e pela nossa equipe. Não vira lista, não vira
+        anúncio e não vira exemplo em lugar nenhum.
+      </p>
+    </aside>
+  </section>
+
+  <nav class="shell trilha" aria-label="Blocos do formulário">
+    <ol>
+      {blocos.map((b) => <li><a href={`#bloco-${b.n}`}>{b.n} {b.nome}</a></li>)}
+      <li><a href="#bloco-07">07 Compromisso</a></li>
+    </ol>
+  </nav>
+
+  <form class="shell form" id="diagnostico" novalidate>
+    {
+      blocos.map((bloco) => (
+        <fieldset class="bloco" id={`bloco-${bloco.n}`}>
+          <legend class="visually-hidden">{`Bloco ${bloco.n}: ${bloco.nome}`}</legend>
+
+          <div class="rule" data-reveal aria-hidden="true">
+            <span class="rule__num">{bloco.n}</span>
+            <span class="rule__label">{bloco.nome}</span>
+          </div>
+
+          <div class="campos">
+            {bloco.campos.map((campo, i) => (
+              <div class:list={['campo', campo.tipo === 'escolha' && 'campo--escolha']} data-reveal data-reveal-step={i}>
+                {campo.tipo === 'texto' && (
+                  <>
+                    <label for={campo.id}>
+                      {campo.label}
+                      {campo.obrigatorio && <span class="req" aria-hidden="true"> *</span>}
+                    </label>
+                    <input
+                      id={campo.id}
+                      name={campo.id}
+                      type={campo.input ?? 'text'}
+                      required={campo.obrigatorio}
+                      autocomplete={
+                        campo.id === 'nome' ? 'name'
+                        : campo.id === 'email' ? 'email'
+                        : campo.id === 'whatsapp' ? 'tel'
+                        : 'off'
+                      }
+                    />
+                  </>
+                )}
+
+                {campo.tipo === 'longo' && (
+                  <>
+                    <label for={campo.id}>{campo.label}</label>
+                    <textarea id={campo.id} name={campo.id} rows="3" />
+                  </>
+                )}
+
+                {campo.tipo === 'escolha' && (
+                  <fieldset class="escolha">
+                    <legend>
+                      {campo.label}
+                      {campo.obrigatorio && <span class="req" aria-hidden="true"> *</span>}
+                    </legend>
+                    {campo.opcoes.map((opcao, j) => (
+                      <label class="opcao" for={`${campo.id}-${j}`}>
+                        <input
+                          id={`${campo.id}-${j}`}
+                          type="radio"
+                          name={campo.id}
+                          value={opcao}
+                          required={campo.obrigatorio && j === 0}
+                        />
+                        <span>{opcao}</span>
+                      </label>
+                    ))}
+                  </fieldset>
+                )}
+              </div>
+            ))}
+          </div>
+        </fieldset>
+      ))
+    }
+
+    <!-- bloco 07: o filtro final -->
+    <fieldset class="bloco bloco--final" id="bloco-07">
+      <legend class="visually-hidden">Bloco 07: Compromisso</legend>
+
+      <div class="rule rule--creme" data-reveal aria-hidden="true">
+        <span class="rule__num">07</span>
+        <span class="rule__label">Compromisso</span>
+      </div>
+
+      <fieldset class="escolha escolha--final" data-reveal>
+        <legend class="final__pergunta">
+          O nosso trabalho mexe primeiro em como você decide, e isso pede a sua liderança dentro da
+          sala. O ciclo e o investimento saem depois do diagnóstico, quando já sabemos o que o seu
+          caso pede. Você está pronto para esse nível de envolvimento?
+        </legend>
+        {
+          compromisso.map((opcao, j) => (
+            <label class="opcao opcao--final" for={`compromisso-${j}`}>
+              <input id={`compromisso-${j}`} type="radio" name="compromisso" value={opcao} required={j === 0} />
+              <span>{opcao}</span>
+            </label>
+          ))
+        }
+      </fieldset>
+
+      <div class="lgpd" data-reveal>
+        <input id="lgpd" name="lgpd" type="checkbox" required />
+        <label for="lgpd">
+          Autorizo a FEITTO a tratar os dados acima para analisar o meu caso e entrar em contato,
+          conforme a <a href="/politica-de-privacidade">Política de Privacidade</a>. Posso pedir a
+          exclusão a qualquer momento.
+        </label>
+      </div>
+
+      <p class="erro" id="form-erro" role="alert" hidden></p>
+
+      <button type="submit" class="btn btn--solid enviar">Enviar minhas respostas</button>
+    </fieldset>
+  </form>
+
+  <section class="shell section depois">
+    <div class="rule" data-reveal>
+      <span class="rule__num" aria-hidden="true">→</span>
+      <span class="rule__label">O que acontece depois</span>
+    </div>
+
+    <ol class="passos">
+      <li class="passo" data-reveal>
+        <span class="passo__num">01</span>
+        <p>Eu leio pessoalmente. Aqui não tem resposta automática.</p>
+      </li>
+      <li class="passo" data-reveal data-reveal-step="1">
+        <span class="passo__num">02</span>
+        <p>
+          Havendo encaixe, você recebe um contato pelo WhatsApp em até dois dias úteis, já com uma
+          primeira leitura do seu caso.
+        </p>
+      </li>
+      <li class="passo" data-reveal data-reveal-step="2">
+        <span class="passo__num">03</span>
+        <p>
+          Se não houver, eu te falo isso com clareza e, quando der, aponto um caminho que sirva para
+          o seu momento.
+        </p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- confirmação: substitui o formulário depois do envio -->
+  <section class="confirma" id="confirmacao" hidden tabindex="-1">
+    <div class="shell">
+      <div class="confirma__grid">
+        <h2 class="confirma__title">Recebemos suas respostas.</h2>
+        <div class="confirma__texto">
+          <p>
+            Cada diagnóstico é lido pessoalmente, então não espere um retorno automático. Havendo
+            encaixe entre o seu momento e o nosso método, a gente procura você pelo WhatsApp que
+            ficou aí em cima.
+          </p>
+          <p class="confirma__forte">Obrigada pela sinceridade. É dela que a clareza começa.</p>
+          <a href="/" class="link-rule confirma__voltar">
+            Voltar ao início <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .abertura {
+    display: grid;
+    gap: clamp(2rem, 5vw, 7.5rem);
+    padding-block-start: clamp(3.5rem, 6vw, 5.75rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .abertura {
+      grid-template-columns: minmax(0, 43.75rem) minmax(0, 1fr);
+    }
+  }
+  .abertura__left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.375rem;
+  }
+  .abertura__title {
+    margin-block: 2rem 0.75rem;
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    line-height: 1.06;
+    letter-spacing: -0.028em;
+  }
+
+  .nota {
+    border-inline-start: 2px solid var(--drift);
+    padding-inline-start: 2.125rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: var(--coffee);
+  }
+  @media (min-width: 62rem) {
+    .nota {
+      margin-block-start: 3.75rem;
+    }
+  }
+  .nota__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+
+  /* trilha dos blocos */
+  .trilha {
+    margin-block-start: clamp(3rem, 5vw, 4.75rem);
+  }
+  .trilha ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin: 0;
+    padding: 1.375rem 0;
+    list-style: none;
+    border-block: 1px solid var(--silver);
+    border-block-end-color: var(--hairline);
+  }
+  .trilha a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--drift);
+    border-block-end: 1px solid transparent;
+    transition: color 200ms var(--ease), border-color 200ms var(--ease);
+  }
+  .trilha a:hover {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+
+  /* blocos */
+  .form {
+    margin-block-start: clamp(2.5rem, 4vw, 4.25rem);
+  }
+  .bloco {
+    margin: 0 0 clamp(3rem, 5vw, 4.75rem);
+    padding: 0;
+    border: 0;
+  }
+
+  .campos {
+    display: grid;
+    gap: clamp(1.75rem, 3vw, 2.75rem) clamp(2rem, 4vw, 4.5rem);
+    margin-block-start: clamp(1.75rem, 3vw, 2.5rem);
+  }
+  @media (min-width: 62rem) {
+    .campos {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .campo--escolha {
+      grid-column: span 1;
+    }
+  }
+
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .campo > label {
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    color: var(--coffee);
+  }
+  .req {
+    color: var(--drift);
+  }
+
+  .campo input[type='text'],
+  .campo input[type='tel'],
+  .campo input[type='email'] {
+    min-height: 44px;
+    padding: 0.75rem 0;
+    font-family: var(--sans);
+    font-size: 1.125rem;
+    font-weight: 300;
+    color: var(--ink);
+    background: none;
+    border: 0;
+    border-block-end: 1px solid var(--silver);
+    border-radius: 0;
+    transition: border-color 200ms var(--ease);
+  }
+  .campo input:focus {
+    border-color: var(--ink);
+  }
+
+  .campo textarea {
+    padding: 1rem 1.125rem;
+    font-family: var(--sans);
+    font-size: 1.0625rem;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--ink);
+    background: #e9e4df;
+    border: 1px solid var(--silver);
+    border-radius: 0;
+    resize: vertical;
+  }
+
+  .escolha {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .escolha > legend {
+    padding: 0;
+    margin-block-end: 0.625rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    color: var(--coffee);
+  }
+
+  .opcao {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    min-height: 44px;
+    padding-block: 0.6875rem;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    cursor: pointer;
+    border-block-end: 1px solid var(--hairline-soft);
+  }
+  .opcao input {
+    flex: 0 0 auto;
+    width: 0.9375rem;
+    height: 0.9375rem;
+    margin-block-start: 0.3125rem;
+    accent-color: var(--ink);
+    cursor: pointer;
+  }
+
+  /* bloco final */
+  .bloco--final {
+    margin-block-start: clamp(2rem, 4vw, 3rem);
+    padding: clamp(2.5rem, 5vw, 4.5rem) var(--gutter) clamp(3rem, 5vw, 5rem);
+    margin-inline: calc(var(--gutter) * -1);
+    background: var(--creme);
+  }
+  .escolha--final {
+    margin-block-start: clamp(1.75rem, 3vw, 2.5rem);
+    max-width: 58.75rem;
+  }
+  .final__pergunta {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    font-weight: 300;
+    line-height: 1.5;
+    color: var(--ink);
+    margin-block-end: 1.125rem;
+  }
+  .opcao--final {
+    font-size: clamp(1rem, 1.6vw, 1.125rem);
+    padding-block: 1rem;
+    border-block-end-color: var(--creme-rule);
+  }
+
+  .lgpd {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    max-width: 58.75rem;
+    margin-block-start: 2.5rem;
+  }
+  .lgpd input {
+    flex: 0 0 auto;
+    width: 1rem;
+    height: 1rem;
+    margin-block-start: 0.375rem;
+    accent-color: var(--ink);
+    cursor: pointer;
+  }
+  .lgpd label {
+    font-size: 0.875rem;
+    line-height: 1.75;
+    color: var(--coffee);
+    cursor: pointer;
+  }
+  .lgpd a {
+    color: var(--ink);
+    text-decoration: none;
+    border-block-end: 1px solid var(--drift);
+  }
+
+  .erro {
+    margin-block-start: 1.5rem;
+    max-width: 48rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--coffee);
+    border-inline-start: 2px solid var(--ink);
+    padding-inline-start: 1rem;
+  }
+  .erro[hidden] {
+    display: none;
+  }
+
+  .enviar {
+    margin-block-start: 2.5rem;
+    padding: 1.3125rem 2.25rem;
+  }
+
+  /* o que acontece depois */
+  .passos {
+    display: grid;
+    gap: 2rem 0;
+    margin: clamp(2rem, 3vw, 3rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  @media (min-width: 62rem) {
+    .passos {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .passo {
+      padding-inline-end: 4rem;
+    }
+    .passo + .passo {
+      border-inline-start: 1px solid var(--hairline);
+      padding-inline-start: 4rem;
+    }
+  }
+  .passo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .passo__num {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    color: var(--drift);
+  }
+  .passo p {
+    font-size: clamp(1rem, 1.6vw, 1.125rem);
+    line-height: 1.7;
+  }
+
+  /* confirmação */
+  .confirma {
+    margin-block-start: clamp(4rem, 7vw, 6.5rem);
+    padding-block: clamp(4rem, 7vw, 6rem);
+    background: var(--ink);
+    color: var(--silver);
+  }
+  .confirma[hidden] {
+    display: none;
+  }
+  .confirma__grid {
+    display: grid;
+    gap: clamp(2rem, 5vw, 7.5rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .confirma__grid {
+      grid-template-columns: minmax(0, 38.75rem) minmax(0, 1fr);
+    }
+  }
+  .confirma__title {
+    font-size: clamp(2.125rem, 4.5vw, 3.125rem);
+    color: var(--alyssum);
+  }
+  .confirma__texto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .confirma__texto p {
+    line-height: 1.8;
+  }
+  .confirma__forte {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+    color: var(--alyssum);
+  }
+  .confirma__voltar {
+    color: var(--alyssum);
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#diagnostico')!;
+  const erro = document.querySelector<HTMLElement>('#form-erro')!;
+  const confirmacao = document.querySelector<HTMLElement>('#confirmacao')!;
+  const trilha = document.querySelector<HTMLElement>('.trilha')!;
+  const depois = document.querySelector<HTMLElement>('.depois')!;
+
+  /**
+   * [PENDENTE] Endpoint de recebimento. Enquanto estiver vazio, o envio segue
+   * o fluxo completo na tela mas nada sai do navegador — é o que permite
+   * testar a experiência antes do CRM estar ligado.
+   */
+  const ENDPOINT = '';
+
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    erro.hidden = true;
+
+    if (!form.reportValidity()) {
+      const invalido = form.querySelector<HTMLElement>(':invalid');
+      invalido?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      invalido?.focus({ preventScroll: true });
+      return;
+    }
+
+    const botao = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    botao.disabled = true;
+    botao.textContent = 'Enviando…';
+
+    const dados = Object.fromEntries(new FormData(form).entries());
+
+    try {
+      if (ENDPOINT) {
+        const resposta = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dados),
+        });
+        if (!resposta.ok) throw new Error(String(resposta.status));
+      } else {
+        console.info('[diagnóstico] endpoint ainda não configurado. Respostas:', dados);
+      }
+
+      form.hidden = true;
+      trilha.hidden = true;
+      depois.hidden = true;
+      confirmacao.hidden = false;
+      confirmacao.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      confirmacao.focus({ preventScroll: true });
+    } catch {
+      botao.disabled = false;
+      botao.textContent = 'Enviar minhas respostas';
+      erro.hidden = false;
+      erro.textContent =
+        'Não consegui enviar agora. Tente de novo em instantes ou me escreva em contato@feitto.com.br que eu leio do mesmo jeito.';
+      erro.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  });
+</script>

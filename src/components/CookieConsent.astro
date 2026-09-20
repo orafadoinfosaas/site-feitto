@@ -1,0 +1,320 @@
+---
+/**
+ * Banner e painel de preferências.
+ * Recusar tem o mesmo peso visual de aceitar, nenhuma caixa vem marcada e
+ * fechar não vale como consentimento — o painel só fecha com uma escolha.
+ */
+---
+
+<div id="consent" class="consent" hidden>
+  <!-- banner -->
+  <section
+    class="consent__banner"
+    role="dialog"
+    aria-modal="false"
+    aria-labelledby="consent-title"
+    data-consent-banner
+  >
+    <div class="consent__text">
+      <h2 id="consent-title" class="consent__title">Sobre os cookies deste site</h2>
+      <p>
+        A gente usa cookies para o site funcionar e, se você permitir, para entender como as pessoas
+        chegam até aqui. Nada dispara antes de você escolher. Leia a
+        <a href="/politica-de-privacidade">Política de Privacidade</a>.
+      </p>
+    </div>
+    <div class="consent__actions">
+      <button type="button" class="btn btn--ghost-invert" data-consent-open-panel>Personalizar</button>
+      <button type="button" class="btn btn--ghost-invert consent__equal" data-consent-reject>
+        Recusar todos
+      </button>
+      <button type="button" class="btn btn--invert consent__equal" data-consent-accept>
+        Aceitar todos
+      </button>
+    </div>
+  </section>
+
+  <!-- painel -->
+  <div class="consent__scrim" data-consent-panel hidden>
+    <section class="consent__panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
+      <header class="consent__panel-head">
+        <div>
+          <h2 id="panel-title" class="consent__panel-title">Preferências de cookies</h2>
+          <p class="consent__panel-lede">
+            Escolha o que pode rodar enquanto você navega. Dá para mudar quando quiser, pelo link no
+            rodapé.
+          </p>
+        </div>
+      </header>
+
+      <div class="consent__list">
+        <div class="consent__item">
+          <div>
+            <label class="consent__name" for="c-necessarios">Necessários</label>
+            <p class="consent__desc">
+              Mantêm a sessão, a segurança e guardam a sua escolha aqui. Sem eles o site não funciona.
+            </p>
+          </div>
+          <div class="consent__state">
+            <span class="consent__always">Sempre ativo</span>
+            <input id="c-necessarios" type="checkbox" checked disabled />
+          </div>
+        </div>
+
+        <div class="consent__item">
+          <div>
+            <label class="consent__name" for="c-analise">Análise de uso</label>
+            <p class="consent__desc">
+              Google Analytics 4. Mostra quais páginas as pessoas leem e por onde chegaram, em números
+              agregados.
+            </p>
+          </div>
+          <div class="consent__state">
+            <input id="c-analise" type="checkbox" data-consent-toggle="analise" />
+          </div>
+        </div>
+
+        <div class="consent__item">
+          <div>
+            <label class="consent__name" for="c-marketing">Marketing</label>
+            <p class="consent__desc">
+              Pixel da Meta. Permite medir o resultado dos anúncios e voltar a falar com quem já
+              visitou o site.
+            </p>
+          </div>
+          <div class="consent__state">
+            <input id="c-marketing" type="checkbox" data-consent-toggle="marketing" />
+          </div>
+        </div>
+      </div>
+
+      <div class="consent__panel-actions">
+        <button type="button" class="btn btn--solid" data-consent-save>Salvar preferências</button>
+        <button type="button" class="btn btn--ghost" data-consent-accept>Aceitar todos</button>
+        <button type="button" class="btn btn--ghost" data-consent-reject>Recusar todos</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<style>
+  .consent[hidden] {
+    display: none;
+  }
+
+  .consent__banner {
+    position: fixed;
+    inset-block-end: 0;
+    inset-inline: 0;
+    z-index: 60;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: clamp(1.5rem, 3vw, 2rem) var(--gutter);
+    background: var(--ink);
+    color: var(--silver);
+  }
+  @media (min-width: 62rem) {
+    .consent__banner {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 4rem;
+    }
+  }
+
+  .consent__text {
+    max-width: 44rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .consent__text p {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+  }
+  .consent__text a {
+    color: var(--alyssum);
+    border-block-end: 1px solid var(--drift);
+    text-decoration: none;
+  }
+
+  .consent__title {
+    font-family: var(--sans);
+    font-size: 1.125rem;
+    font-weight: 300;
+    letter-spacing: 0;
+    color: var(--alyssum);
+  }
+
+  .consent__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    flex-shrink: 0;
+  }
+  @media (min-width: 40rem) {
+    .consent__actions {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+  /* recusar e aceitar com exatamente o mesmo peso */
+  .consent__equal {
+    flex: 1 1 auto;
+    min-width: 10.5rem;
+  }
+
+  .consent__scrim {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+    display: grid;
+    place-items: center;
+    padding: var(--gutter);
+    background: rgb(28 22 25 / 0.55);
+    overflow-y: auto;
+  }
+  .consent__scrim[hidden] {
+    display: none;
+  }
+
+  .consent__panel {
+    width: min(48.75rem, 100%);
+    background: var(--alyssum);
+    color: var(--ink);
+    border: 1px solid var(--silver);
+    padding: clamp(1.75rem, 4vw, 2.5rem);
+  }
+
+  .consent__panel-title {
+    font-size: clamp(1.375rem, 3vw, 1.625rem);
+    font-weight: 200;
+  }
+  .consent__panel-lede {
+    margin-block-start: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--coffee);
+    max-width: 34rem;
+  }
+
+  .consent__list {
+    margin-block-start: 2.125rem;
+  }
+
+  .consent__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.75rem;
+    border-block-start: 1px solid var(--hairline);
+    padding-block: 1.5rem;
+  }
+  .consent__item:first-child {
+    border-color: var(--silver);
+  }
+  .consent__item:last-child {
+    border-block-end: 1px solid var(--silver);
+  }
+
+  .consent__name {
+    display: block;
+    font-size: 1.125rem;
+    font-weight: 300;
+    cursor: pointer;
+  }
+  .consent__desc {
+    margin-block-start: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--drift-ink);
+  }
+
+  .consent__state {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+    padding-block-start: 0.3125rem;
+  }
+  .consent__state input {
+    width: 1.125rem;
+    height: 1.125rem;
+    accent-color: var(--ink);
+    cursor: pointer;
+  }
+  .consent__state input:disabled {
+    accent-color: var(--drift);
+    cursor: default;
+  }
+  .consent__always {
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+
+  .consent__panel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-block-start: 2rem;
+  }
+</style>
+
+<script>
+  import { initConsentMode, readConsent, writeConsent, applyConsent } from '../lib/consent';
+
+  initConsentMode();
+
+  const root = document.querySelector<HTMLElement>('#consent')!;
+  const banner = root.querySelector<HTMLElement>('[data-consent-banner]')!;
+  const panel = root.querySelector<HTMLElement>('[data-consent-panel]')!;
+  const analise = root.querySelector<HTMLInputElement>('[data-consent-toggle="analise"]')!;
+  const marketing = root.querySelector<HTMLInputElement>('[data-consent-toggle="marketing"]')!;
+
+  let lastFocus: HTMLElement | null = null;
+
+  const existing = readConsent();
+  applyConsent(existing);
+
+  if (!existing) {
+    root.hidden = false;
+  }
+
+  function decide(choice: { analise: boolean; marketing: boolean }) {
+    applyConsent(writeConsent(choice));
+    panel.hidden = true;
+    root.hidden = true;
+    lastFocus?.focus();
+  }
+
+  function openPanel() {
+    const current = readConsent();
+    analise.checked = current?.analise ?? false;
+    marketing.checked = current?.marketing ?? false;
+    lastFocus = document.activeElement as HTMLElement;
+    root.hidden = false;
+    banner.style.display = 'none';
+    panel.hidden = false;
+    panel.querySelector<HTMLElement>('button')?.focus();
+  }
+
+  root.querySelectorAll('[data-consent-accept]').forEach((el) =>
+    el.addEventListener('click', () => decide({ analise: true, marketing: true }))
+  );
+  root.querySelectorAll('[data-consent-reject]').forEach((el) =>
+    el.addEventListener('click', () => decide({ analise: false, marketing: false }))
+  );
+  root
+    .querySelector('[data-consent-save]')
+    ?.addEventListener('click', () =>
+      decide({ analise: analise.checked, marketing: marketing.checked })
+    );
+  root.querySelector('[data-consent-open-panel]')?.addEventListener('click', openPanel);
+
+  // o link do rodapé reabre o painel em qualquer página
+  document
+    .querySelectorAll('[data-open-consent]')
+    .forEach((el) => el.addEventListener('click', openPanel));
+</script>

@@ -1,0 +1,286 @@
+---
+import Base from '../layouts/Base.astro';
+import LogoWall from '../components/LogoWall.astro';
+
+const casos = [
+  {
+    n: '01',
+    setor: 'Seguros · Autem Seguros',
+    pessoa: 'Talita Tosi',
+    titulo: 'De receita concentrada a crescimento com risco distribuído',
+    cenario:
+      'Mais de 70% do faturamento vinha de um único cliente. A empresa acompanhava informações sem saber por que aquelas importavam e, nas palavras dela, imaginava estar caminhando na direção certa quando seguia para o lado oposto.',
+    virada:
+      'Reconstruímos o painel de indicadores a partir da pergunta certa: quais números mudam uma decisão. Testamos crenças antigas sobre a operação e várias caíram. Alguns pontos que a empresa considerava fortaleza eram, na verdade, fragilidade.',
+    resultado:
+      'O faturamento de 2025 inteiro, alcançado em sete meses de 2026. E o maior cliente saiu de 70% para 50% da receita: menos dependência e mais receita ao mesmo tempo.',
+    voz: 'Aprendemos que olhar para os números não é sinônimo de dor ou problema, e sim de força. Saber exatamente onde estamos e, principalmente, para onde não queremos ir trouxe muito mais clareza.',
+  },
+  {
+    n: '02',
+    setor: 'Varejo e indústria · Tijox',
+    pessoa: 'Barbara Rodrigues',
+    titulo: 'De duas empresas confusas a uma marca só',
+    cenario:
+      'Anos de decisão no achismo, sem indicadores. Informação concentrada em poucas pessoas e setores que pareciam empresas diferentes. E uma desconexão desconfortável entre a qualidade dos produtos e a forma como a empresa se apresentava ao mercado.',
+    virada:
+      'Estruturamos indicadores e rotina de acompanhamento, e conduzimos um rebranding completo: duas empresas unificadas em uma marca só, identidade consistente e posicionamento redefinido.',
+    resultado:
+      'Operação previsível, com metas e acompanhamento. Percepção de valor elevada sem mudar a entrega. E uma liderança que passou a defender o próprio ponto de vista.',
+    voz: 'Eu já tinha conhecimento, ideias e vontade de fazer acontecer, mas faltava confiança para me posicionar. Muitas vezes eu me sentia menor do que realmente era.',
+  },
+  {
+    n: '03',
+    setor: 'Comunicação · Notre Comunicação',
+    pessoa: 'Beatriz Ferreira e Eveline Cordeiro',
+    titulo: 'De caixa zero a quatro meses de receita em caixa, em sete meses',
+    cenario:
+      'Uma agência reconhecida pela entrega, mas conhecida por fazer de tudo. Sem meta definida e sem leitura clara de rentabilidade. Nas palavras da sócia, a sensação era de trabalhar muito e não sair do lugar.',
+    virada:
+      'Tiramos as sócias do operacional e as recolocamos onde só elas podiam estar: na criação estratégica. Abrimos a rentabilidade real por serviço e a conta mudou de lugar. A maior estrutura estava montada em torno do serviço que era menos rentável.',
+    resultado:
+      'Fundo de caixa de zero a quatro meses de receita, em sete meses de trabalho. Metas passaram a existir e a decisão passou a ter critério.',
+    voz: 'Depois que conheci o trabalho da FEITTO, passei a enxergar que quase todas as empresas que conheço precisam dela.',
+  },
+  {
+    n: '04',
+    setor: 'Saúde · Movê Ortopedia',
+    pessoa: 'Dra. Danila Feitoza',
+    titulo: 'De plantões e possibilidades dispersas a uma clínica posicionada',
+    cenario:
+      'Início de carreira como ortopedista, vivendo de plantões, com muitas possibilidades e nenhum critério de escolha. O desejo de um negócio multiprofissional existia, mas era apenas uma ideia. Ela aceitava tudo o que aparecia como proposta.',
+    virada:
+      'Redefinimos agenda, prioridades e visão. Depois nicho e posicionamento, saindo da ortopedia tradicional para a saúde do movimento, com foco em prevenção, performance e qualidade de vida. Precificação com margem definida, plano financeiro por etapa e clareza sobre a origem do recurso de cada fase da inauguração.',
+    resultado:
+      'Uma ideia virou empresa real: clínica estruturada, marca consolidada e posicionamento claro. Nas palavras dela, algo que dificilmente teria construído sozinha.',
+  },
+  {
+    n: '05',
+    setor: 'Arquitetura e educação · TRIAA',
+    pessoa: 'Milena Trindade',
+    titulo: 'De expertise dispersa a um negócio estruturado',
+    cenario:
+      'Treze anos de gestão no varejo de luxo, somados à passagem por uma das marcas de mobiliário de alto padrão mais reconhecidas do país. Repertório raro, construído em operações exigentes. O que ainda não existia era forma: o conhecimento estava inteiro na cabeça de uma pessoa e ainda não tinha virado produto.',
+    virada:
+      'Transformamos talento individual em negócio de educação, com metodologia e produtos definidos. Refinamos o pitch e mudamos o eixo da venda. Deixou de ser relatório e passou a ser previsibilidade e mudança de patamar para arquitetos e lojistas.',
+    resultado:
+      'A referência que sustenta a operação: 30% de crescimento ao ano por três anos seguidos. E, no ponto de partida do novo negócio, clareza sobre quanto ela precisa buscar e de onde esse resultado pode vir.',
+  },
+];
+---
+
+<Base
+  title="Casos | FEITTO"
+  description="Cinco casos reais de inteligência comercial, em seguros, varejo, comunicação, saúde e arquitetura. Publicados com autorização de uso."
+>
+  <section class="shell abertura">
+    <div class="abertura__top">
+      <h1 class="abertura__title">
+        Onde a clareza virou <em class="key">resultado</em>.
+      </h1>
+      <p class="lede">
+        Sem fórmula mágica. Clareza estratégica, decisão baseada em dado e mudança de comportamento
+        de quem lidera. Todos os casos abaixo são reais e publicados com autorização.
+      </p>
+    </div>
+
+    <div class="abertura__wall">
+      <LogoWall kind="casos" />
+    </div>
+  </section>
+
+  {
+    casos.map((c) => (
+      <article class="shell caso">
+        <div class="rule" data-reveal>
+          <span class="rule__num">{c.n}</span>
+          <span class="rule__label caso__setor">{c.setor}</span>
+          <span class="caso__pessoa">{c.pessoa}</span>
+        </div>
+
+        <h2 class="caso__title" data-reveal>
+          {c.titulo}
+        </h2>
+
+        <div class="caso__grid">
+          <div class="caso__bloco" data-reveal>
+            <h3 class="caso__rotulo">O cenário</h3>
+            <p>{c.cenario}</p>
+          </div>
+          <div class="caso__bloco caso__bloco--mid" data-reveal data-reveal-step="1">
+            <h3 class="caso__rotulo">A virada FEITTO</h3>
+            <p>{c.virada}</p>
+          </div>
+          <div class="caso__bloco caso__bloco--fim" data-reveal data-reveal-step="2">
+            <h3 class="caso__rotulo caso__rotulo--forte">O resultado</h3>
+            <p class="caso__resultado">{c.resultado}</p>
+          </div>
+        </div>
+
+        {c.voz && (
+          <blockquote class="caso__voz" data-reveal>
+            <p>“{c.voz}”</p>
+            <footer>{c.pessoa}</footer>
+          </blockquote>
+        )}
+      </article>
+    ))
+  }
+
+  <section class="shell section">
+    <div class="cta">
+      <h2 class="cta__title" data-reveal>
+        O próximo caso pode ser o <em class="key">seu</em>.
+      </h2>
+      <div class="cta__right" data-reveal data-reveal-step="1">
+        <p class="cta__ressalva">
+          Números de casos reais, publicados com autorização de uso. São referências de campo, e não
+          promessa de resultado.
+        </p>
+        <a href="/diagnostico" class="btn btn--solid">Fazer o diagnóstico</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .abertura {
+    padding-block-start: clamp(3.5rem, 6vw, 5.75rem);
+  }
+  .abertura__top {
+    display: grid;
+    gap: 1.5rem clamp(2rem, 5vw, 7.5rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .abertura__top {
+      grid-template-columns: minmax(0, 43.75rem) minmax(0, 1fr);
+    }
+    .abertura__top .lede {
+      padding-block-start: 0.75rem;
+    }
+  }
+  .abertura__title {
+    font-size: clamp(2.25rem, 5vw, 3.875rem);
+    line-height: 1.06;
+    letter-spacing: -0.028em;
+  }
+  .abertura__wall {
+    margin-block-start: clamp(2.25rem, 4vw, 3.5rem);
+  }
+
+  .caso {
+    padding-block-start: clamp(3.5rem, 6vw, 6.5rem);
+  }
+  .caso__setor {
+    flex: 1 1 auto;
+  }
+  .caso__pessoa {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+    display: none;
+  }
+  @media (min-width: 48rem) {
+    .caso__pessoa {
+      display: block;
+    }
+  }
+
+  .caso__title {
+    margin-block-start: clamp(1.75rem, 3vw, 2.875rem);
+    max-width: 66.25rem;
+    font-size: clamp(1.875rem, 4vw, 3rem);
+    line-height: 1.1;
+  }
+
+  .caso__grid {
+    display: grid;
+    gap: 2rem 0;
+    margin-block-start: clamp(1.75rem, 3vw, 2.75rem);
+  }
+  @media (min-width: 62rem) {
+    .caso__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .caso__bloco {
+      padding-inline-end: 3.5rem;
+    }
+    .caso__bloco--mid,
+    .caso__bloco--fim {
+      border-inline-start: 1px solid var(--hairline);
+      padding-inline-start: 3.5rem;
+    }
+  }
+  .caso__bloco p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--coffee);
+  }
+  .caso__rotulo {
+    margin-block-end: 0.875rem;
+    font-family: var(--sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+  .caso__rotulo--forte {
+    color: var(--ink);
+  }
+  .caso__resultado {
+    color: var(--ink) !important;
+  }
+
+  .caso__voz {
+    margin: clamp(2rem, 3vw, 2.75rem) 0 0;
+    border-inline-start: 2px solid var(--drift);
+    padding-inline-start: 2.125rem;
+    max-width: 61.25rem;
+  }
+  .caso__voz p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    line-height: 1.5;
+  }
+  .caso__voz footer {
+    margin-block-start: 1.125rem;
+    font-family: var(--sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+
+  .cta {
+    display: grid;
+    gap: clamp(1.5rem, 5vw, 7.5rem);
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: clamp(2.5rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .cta {
+      grid-template-columns: minmax(0, 41.25rem) minmax(0, 1fr);
+    }
+  }
+  .cta__title {
+    font-size: clamp(2rem, 4.2vw, 3.25rem);
+  }
+  .cta__right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.625rem;
+  }
+  .cta__ressalva {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--drift-ink);
+    max-width: 30rem;
+  }
+</style>

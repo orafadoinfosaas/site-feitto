@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+*.log
+.env
+.env.production
+
+# ativos originais do ensaio (300dpi, pesados) — versionar no Drive
+assets/

@@ -1,0 +1,1119 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import SectionRule from '../components/SectionRule.astro';
+import LogoWall from '../components/LogoWall.astro';
+import heroLuana from '../assets/hero-luana.png';
+
+const reconhecimentos = [
+  'Você trabalha muito e mesmo assim não sabe dizer se o mês foi bom ou se foi só movimentado.',
+  'Aparecem oportunidades o tempo todo e você acaba aceitando quase todas, porque nunca teve um critério para dizer não.',
+  'Você defende o seu produto com segurança total e hesita na hora de falar o preço.',
+  'Você decide olhando para a própria experiência, porque é o único dado que tem à mão.',
+  'Você desconfia que existe um número que, se olhasse, mudaria alguma coisa. E não sabe qual é.',
+  'Você tem a reputação, tem a rede, tem a ideia. E ela continua sendo uma ideia.',
+];
+const romanos = ['i', 'ii', 'iii', 'iv', 'v', 'vi'];
+
+const fases = [
+  { n: '01', nome: 'Diagnóstico', texto: 'Onde o negócio está de verdade: os gargalos da operação e os vícios de decisão de quem lidera.' },
+  { n: '02', nome: 'Clareza', texto: 'O posicionamento fica definido e as suas mensagens param de brigar entre si.' },
+  { n: '03', nome: 'Estratégia', texto: 'Arquitetura de oferta, preço com margem desenhada e um funil que se sustenta sozinho.' },
+  { n: '04', nome: 'Execução', texto: 'Rotina, indicadores e calibragem, até a operação virar previsível.' },
+];
+
+const diferenciais = [
+  ['Treina técnica sobre uma estrutura frágil', 'Resolve a raiz comportamental e os processos antes de escalar'],
+  ['Entrega um PDF e vai embora', 'Senta ao seu lado e acompanha a execução como conselheiro externo'],
+  ['Fórmulas prontas e scripts genéricos', 'Diagnóstico hiper-personalizado do seu DNA comercial'],
+  ['Ataca o sintoma, que é a falta de vendas', 'Ataca a causa: liderança, processo e posicionamento'],
+];
+
+const provas = [
+  { fato: '+20% de faturamento, com o maior cliente saindo de 70% para 50% da receita.', empresa: 'Autem Seguros', leitura: 'O caso que derruba a crença de que organizar a casa freia o crescimento.' },
+  { fato: 'De caixa zero a quatro meses de receita guardados, em sete meses de trabalho.', empresa: 'Notre Comunicação', leitura: 'Raramente falta faturamento. O que costuma faltar é estrutura para reter.' },
+  { fato: 'Entendeu o que vendia e para quem. O resto se organizou sozinho.', empresa: 'Tijox Revestimentos', leitura: 'Poucas empresas estão mal posicionadas. A maioria está posicionada para um mercado que não é o dela.' },
+  { fato: 'Saída da dependência de um único mercado, com plano e ordem de execução.', empresa: 'Ogunjá Acabamentos', leitura: 'Diversificar sem ordem é trocar um risco por vários.' },
+  { fato: 'Uma ideia que virou clínica: nicho, preço e marca definidos.', empresa: 'Movê Ortopedia', leitura: 'O que trava não costuma ser a falta da ideia, e sim não ter decidido quem ela atende e quanto custa.' },
+];
+
+const vozes = [
+  { fala: 'Aprendemos que olhar para os números não é sinônimo de dor ou problema, e sim de força.', autor: 'Talita Tosi · Autem Seguros' },
+  { fala: 'Meu receio era abrir frente nova e derrubar o que já estava de pé. Não foi isso. Recebi a sequência: o que abrir primeiro, o que deixar para depois.', autor: 'Guilherme Gonzalez · Ogunjá Acabamentos' },
+  { fala: 'A FEITTO não conduz apenas estratégias. Ela ajuda a organizar o pensamento, reduzir a insegurança das decisões e transformar projetos em realidade.', autor: 'Danila Feitoza · Movê Ortopedia' },
+  { fala: 'Depois que conheci o trabalho da FEITTO, passei a enxergar que quase todas as empresas que conheço precisam dela.', autor: 'Beatriz Ferreira · Notre Comunicação' },
+];
+---
+
+<Base
+  title="FEITTO. | Inteligência Comercial para especialistas que viraram donos do negócio"
+  description="Consultoria estratégica para quem construiu excelência técnica e quer parar de decidir por percepção. Diagnóstico, clareza, estratégia e execução, com acompanhamento como conselheiro externo."
+  overlayNav
+>
+  <!-- hero de tela cheia -->
+  <section class="hero">
+    <div class="hero__media">
+      <Image
+        src={heroLuana}
+        alt="Luana Feitoza, fundadora da FEITTO, em pé diante de um quadro, gesticulando durante uma conversa"
+        widths={[880, 1280, 1920, 2560]}
+        sizes="100vw"
+        loading="eager"
+        fetchpriority="high"
+        format="webp"
+        quality={82}
+      />
+    </div>
+
+    <div class="hero__body shell">
+      <p class="eyebrow hero__eyebrow">FEITTO · Inteligência Comercial Integrada</p>
+      <h1 class="hero__title">
+        O talento que te trouxe até aqui não é o que vai te <em class="key">levar adiante</em>.
+      </h1>
+      <p class="hero__lede">
+        Ninguém te ensinou a olhar para a empresa e saber o que priorizar, o que descartar, onde está
+        o lucro de verdade e se ela está indo para onde você quer. A FEITTO organiza isso com você.
+      </p>
+      <div class="hero__actions">
+        <a href="/diagnostico" class="btn btn--invert">Fazer o diagnóstico</a>
+        <a href="/metodo" class="btn btn--ghost-invert">Conhecer o método</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- faixa de autoridade -->
+  <section class="shell autoridade">
+    <div class="autoridade__head" data-reveal>
+      <p class="autoridade__linha">
+        São vinte anos em estratégia comercial de alto padrão, com um número limitado de empresas
+        atendidas por semestre.
+      </p>
+      <p class="autoridade__rotulo">Onde essa leitura foi construída</p>
+    </div>
+    <LogoWall kind="autoridade" />
+  </section>
+
+  <!-- 02 · o ponto de partida -->
+  <section class="shell section">
+    <SectionRule num="02" label="O ponto de partida" />
+
+    <div class="partida__top">
+      <h2 class="h-section" data-reveal>
+        O problema quase nunca é falta de <em class="key">esforço</em>.
+      </h2>
+      <div class="partida__texto">
+        <blockquote class="pull" data-reveal>
+          <p>
+            “Eu me esforçava cada dia mais, trabalhava cada vez mais, mas me sentia patinando sem
+            sair do lugar.”
+          </p>
+        </blockquote>
+        <p data-reveal data-reveal-step="1">
+          Foi assim que uma cliente resumiu quatro anos de empresa. Ela não era desatenta nem
+          despreparada, e era muito boa naquilo que fazia.
+        </p>
+        <p data-reveal data-reveal-step="2">
+          Acontece que ninguém navega sem um instrumento que diga onde fica o norte, e esse
+          instrumento não vem junto com o diploma.
+        </p>
+      </div>
+    </div>
+
+    <p class="rotulo-lista" data-reveal>Talvez você reconheça algum destes lugares</p>
+    <ul class="reconhece">
+      {
+        reconhecimentos.map((linha, i) => (
+          <li class="reconhece__item" data-reveal data-reveal-step={i}>
+            <span class="reconhece__num">{romanos[i]}</span>
+            <span class="reconhece__txt">{linha}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="fecho" data-reveal>
+      Isso acontece com quem assumiu sozinho uma função que nunca foi a sua.
+    </p>
+  </section>
+
+  <!-- 03 · a tese: o único bloco escuro da página -->
+  <section class="tese">
+    <div class="shell">
+      <SectionRule num="03" label="A verdade que ninguém te conta" tone="dark" />
+
+      <h2 class="tese__title" data-reveal>
+        Excelência técnica constrói reputação, mas não constrói uma <em class="key">empresa</em>.
+      </h2>
+
+      <div class="tese__cols">
+        <div class="tese__col" data-reveal>
+          <p>
+            Você aprendeu a decidir do jeito mais confiável que existia: pela sua própria leitura,
+            refinada por anos de prática. Na entrega, essa leitura é mesmo a melhor disponível, e foi
+            ela que te trouxe até aqui.
+          </p>
+          <p class="tese__forte">
+            Na gestão, essa mesma leitura vira outra coisa: deixa de ser experiência e passa a ser
+            <em class="key">viés com currículo</em>.
+          </p>
+        </div>
+        <div class="tese__col" data-reveal data-reveal-step="1">
+          <p>
+            Aí acontece o que os nossos clientes só enxergam depois: a empresa inteira montada em
+            torno do serviço que menos dá lucro. Setores que parecem empresas diferentes. Metas que
+            ninguém definiu, só expectativas. Setenta por cento do faturamento em um cliente só, e
+            ninguém chamando aquilo pelo nome que tem, que é exposição.
+          </p>
+        </div>
+      </div>
+
+      <p class="tese__remate" data-reveal>
+        Nenhum desses problemas é de vendas. Venda é sempre consequência de alguma outra coisa.
+      </p>
+    </div>
+  </section>
+
+  <!-- 04 · as duas jornadas -->
+  <section class="shell section">
+    <SectionRule num="04" label="Para quem trabalhamos" />
+    <h2 class="h-section" data-reveal>
+      Duas portas de entrada para o mesmo <em class="key">trabalho</em>.
+    </h2>
+
+    <div class="jornadas">
+      <article class="jornada" data-reveal>
+        <p class="jornada__head"><span class="jornada__num">01</span> Consolidação</p>
+        <p>
+          Sua empresa está de pé e fatura com consistência, só que cresce no esforço e não no método.
+          Tem operação para diagnosticar, tem número para olhar e tem estrutura para corrigir. A
+          gente organiza o que já existe e transforma a sua visão em resultado.
+        </p>
+        <p class="jornada__ref">
+          <span>Referência</span>
+          5 a 10 anos de mercado, equipe própria, faturamento recorrente.
+        </p>
+      </article>
+
+      <article class="jornada jornada--segunda" data-reveal data-reveal-step="1">
+        <p class="jornada__head"><span class="jornada__num">02</span> Fundação</p>
+        <p>
+          Você tem carreira, reputação e renda consolidadas, e está montando um negócio novo ou
+          mudando de modelo. Aqui não tem caos para organizar: o que tem é uma visão que ainda não
+          ganhou forma. A gente transforma a ideia em visão e a visão em empresa, com prazo, plano e
+          origem de recurso.
+        </p>
+        <p class="jornada__ref">
+          <span>Referência</span>
+          Profissional estabelecido, negócio em projeto ou nos primeiros passos.
+        </p>
+      </article>
+    </div>
+
+    <p class="fecho fecho--rule" data-reveal>
+      Metade dos nossos casos começou pela segunda porta. Uma ideia que ainda não virou empresa
+      também é trabalho de inteligência comercial.
+    </p>
+  </section>
+
+  <!-- 05 · o método -->
+  <section class="shell section">
+    <SectionRule num="05" label="O método" />
+
+    <div class="metodo__head">
+      <h2 class="h-section" data-reveal>Inteligência Comercial Integrada</h2>
+      <p class="lede" data-reveal data-reveal-step="1">
+        A gente mexe no DNA do negócio e na cabeça de quem lidera antes de chegar em qualquer
+        técnica. São quatro fases, nessa ordem, sem pular etapa.
+      </p>
+    </div>
+
+    <ol class="fases">
+      {
+        fases.map((f, i) => (
+          <li class="fase" data-reveal data-reveal-step={i}>
+            <span class="fase__num">FASE {f.n}</span>
+            <span class="fase__nome">{f.nome}</span>
+            <span class="fase__txt">{f.texto}</span>
+          </li>
+        ))
+      }
+    </ol>
+
+    <a href="/metodo" class="link-rule" data-reveal>
+      Ver o método em detalhe <span aria-hidden="true">→</span>
+    </a>
+  </section>
+
+  <!-- 06 · diferenciação -->
+  <section class="shell section">
+    <SectionRule num="06" label="De dentro para fora" />
+    <h2 class="h-section" data-reveal>O que nos diferencia</h2>
+
+    <table class="difer">
+      <thead>
+        <tr>
+          <th scope="col">O mercado faz</th>
+          <th scope="col" class="difer__nos">A FEITTO faz</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          diferenciais.map(([mercado, feitto], i) => (
+            <tr data-reveal data-reveal-step={i}>
+              <td class="difer__mercado">{mercado}</td>
+              <td class="difer__feitto">{feitto}</td>
+            </tr>
+          ))
+        }
+        <tr data-reveal data-reveal-step="4">
+          <td class="difer__mercado">Te entrega mais informação</td>
+          <td class="difer__feitto">
+            Te entrega <em class="key">critério</em> para escolher entre as informações
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="fecho" data-reveal>
+      A última linha é a que mais importa: o seu problema nunca foi falta de acesso a conteúdo.
+    </p>
+  </section>
+
+  <!-- 07 · a solidão da decisão -->
+  <section class="solidao">
+    <div class="shell">
+      <SectionRule num="07" label="O que ninguém nomeia" tone="creme" />
+
+      <h2 class="solidao__pergunta" data-reveal>
+        Quem você consulta antes de uma decisão de duzentos mil reais?
+      </h2>
+
+      <div class="solidao__cols">
+        <div class="solidao__col" data-reveal>
+          <p>
+            Seu time não tem como te ajudar a decidir, porque depende da sua decisão. Seus pares são
+            concorrentes. Seus amigos não conhecem a operação. E os colegas de profissão carregam o
+            mesmo viés técnico e a mesma cegueira comercial que você.
+          </p>
+          <p>
+            Por isso, quando você pede opinião, é opinião que você recebe. E o que faz falta ali é
+            alguém que te faça frente.
+          </p>
+        </div>
+        <div class="solidao__col" data-reveal data-reveal-step="1">
+          <p>
+            Sozinho, tudo demora mais. Uma decisão que se resolveria numa semana com um interlocutor
+            à altura leva quatro meses quando é você contra a sua própria cabeça.
+          </p>
+          <p class="solidao__forte">
+            O que você contrata aqui não é um documento, é o contraponto que hoje não existe na sua
+            mesa.
+          </p>
+        </div>
+      </div>
+
+      <aside class="nota" data-reveal>
+        <p class="nota__rotulo">Sobre discrição</p>
+        <p>
+          A sua própria reputação criou uma expectativa de que você já deveria saber de tudo isso, e
+          é justamente ela que trava o pedido de ajuda.
+        </p>
+        <p class="nota__forte">
+          Aqui, pedir direcionamento não custa reputação. Nada do que é dito na sala sai da sala, e
+          nenhum cliente vira material de divulgação sem autorização assinada.
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 08 · prova de campo -->
+  <section class="shell section">
+    <SectionRule num="08" label="Prova de campo" />
+    <h2 class="h-section" data-reveal>
+      Nenhum desses resultados veio de <em class="key">sorte</em>.
+    </h2>
+
+    <LogoWall kind="casos" />
+
+    <ul class="provas">
+      {
+        provas.map((p, i) => (
+          <li class="prova" data-reveal data-reveal-step={i}>
+            <p class="prova__fato">{p.fato}</p>
+            <div class="prova__meta">
+              <p class="prova__empresa">{p.empresa}</p>
+              <p class="prova__leitura">{p.leitura}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="provas__fecho" data-reveal>
+      <p class="fecho fecho--flush">
+        São seis setores diferentes: saúde, arquitetura, comunicação, indústria, seguros e varejo. O
+        método funciona na raiz do negócio, seja qual for o segmento.
+      </p>
+      <p class="provas__ressalva">
+        Números de casos reais, publicados com autorização de uso. São referências de campo, e não
+        promessa de resultado.
+      </p>
+    </div>
+  </section>
+
+  <!-- 09 · na voz de quem viveu -->
+  <section class="shell section">
+    <SectionRule num="09" label="Na voz de quem viveu" />
+
+    <blockquote class="voz-grande" data-reveal>
+      <p>
+        “Mais do que implantar processos, ela provoca uma mudança de mentalidade. Faz você enxergar
+        sua empresa de fora, questionar padrões e entender o verdadeiro valor da sua marca e da sua
+        liderança.”
+      </p>
+      <footer>Barbara Rodrigues · Tijox</footer>
+    </blockquote>
+
+    <div class="vozes">
+      {
+        vozes.map((v, i) => (
+          <blockquote class="voz" data-reveal data-reveal-step={i}>
+            <p>“{v.fala}”</p>
+            <footer>{v.autor}</footer>
+          </blockquote>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 10 · o custo da inação -->
+  <section class="shell section">
+    <SectionRule num="10" label="O custo da inação" />
+
+    <div class="custo">
+      <h2 class="custo__title" data-reveal>O prejuízo que não aparece no extrato.</h2>
+      <p data-reveal data-reveal-step="1">
+        Decidir no escuro não aparece como prejuízo em lugar nenhum. Aparece como crescimento que não
+        aconteceu, e ninguém contabiliza isso.
+      </p>
+      <p data-reveal data-reveal-step="2">
+        São os anos com a receita concentrada em poucos clientes sem que ninguém chamasse aquilo de
+        risco. É a estrutura, as pessoas e a energia investidas no serviço que menos dá lucro. É o
+        preço praticado abaixo do valor entregue, todo mês, em cada contrato assinado. É o tempo que
+        você leva para decidir sozinho o que decidiria em uma semana acompanhado.
+      </p>
+      <p data-reveal data-reveal-step="3">
+        E tem a assimetria mais desconfortável de todas: concorrentes tecnicamente piores, porém
+        comercialmente estruturados, ocupando o espaço que seria seu. Isso não é sorte deles.
+      </p>
+      <p class="custo__remate" data-reveal>
+        Antes de perguntar quanto custa estruturar a estratégia comercial do seu negócio, some quanto
+        já te custou, nos últimos doze meses, <em class="key">não ter feito isso</em>.
+      </p>
+    </div>
+  </section>
+
+  <!-- 11 · próximo passo -->
+  <section class="shell section">
+    <div class="cta">
+      <div class="cta__left" data-reveal>
+        <p class="cta__rotulo">Como começa</p>
+        <h2 class="h-section">Todo trabalho começa por um diagnóstico.</h2>
+      </div>
+      <div class="cta__right" data-reveal data-reveal-step="1">
+        <p class="lede">
+          O diagnóstico não é uma proposta comercial disfarçada. Ele é um filtro, e funciona nos dois
+          sentidos: serve para você entender o seu momento e para a gente entender se o nosso método
+          se encontra com ele.
+        </p>
+        <p class="cta__nota">Leva cerca de três minutos e é lido pessoalmente.</p>
+        <a href="/diagnostico" class="btn btn--solid">Fazer o diagnóstico</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------------- hero ---------------- */
+  .hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: min(92svh, 56rem);
+    padding-block: 9rem clamp(3rem, 6vw, 5.25rem);
+    isolation: isolate;
+    background: var(--ink);
+  }
+
+  .hero__media {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+  }
+  .hero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* no celular o enquadramento segue o rosto, à direita do quadro */
+    object-position: 72% center;
+  }
+  @media (min-width: 62rem) {
+    .hero__media :global(img) {
+      object-position: center;
+    }
+  }
+
+  /* máscara de legibilidade — a única exceção à regra de não usar gradiente */
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(
+      to top,
+      rgb(28 22 25 / 0.92) 0%,
+      rgb(28 22 25 / 0.78) 38%,
+      rgb(28 22 25 / 0.35) 72%,
+      rgb(28 22 25 / 0.15) 100%
+    );
+  }
+  @media (min-width: 62rem) {
+    .hero::after {
+      background: linear-gradient(
+        to right,
+        rgb(28 22 25 / 0.9) 0%,
+        rgb(28 22 25 / 0.78) 34%,
+        rgb(28 22 25 / 0.35) 62%,
+        rgb(28 22 25 / 0.08) 100%
+      );
+    }
+  }
+
+  .hero__body {
+    max-width: 44rem;
+    color: var(--alyssum);
+  }
+  .hero__eyebrow {
+    color: var(--silver);
+  }
+  .hero__title {
+    margin-block-start: 2.125rem;
+    font-size: clamp(2.5rem, 6vw, 4.75rem);
+    line-height: 1.04;
+    letter-spacing: -0.028em;
+  }
+  .hero__lede {
+    margin-block-start: 2.25rem;
+    max-width: 38rem;
+    font-size: clamp(1rem, 1.5vw, 1.1875rem);
+    line-height: 1.75;
+    color: var(--creme);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-block-start: 2.75rem;
+  }
+
+  /* ---------------- faixa de autoridade ---------------- */
+  .autoridade {
+    padding-block-start: clamp(2.25rem, 4vw, 2.75rem);
+  }
+  .autoridade__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem 3.75rem;
+    margin-block-end: 1.875rem;
+  }
+  .autoridade__linha {
+    font-size: 0.9375rem;
+    color: var(--coffee);
+    max-width: 42rem;
+  }
+  .autoridade__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+
+  /* ---------------- títulos de seção ---------------- */
+  .h-section {
+    margin-block-start: clamp(2rem, 4vw, 3.375rem);
+    font-size: clamp(2rem, 4.2vw, 3.25rem);
+    line-height: 1.1;
+  }
+
+  /* ---------------- 02 ---------------- */
+  .partida__top {
+    display: grid;
+    gap: clamp(2rem, 5vw, 7.5rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .partida__top {
+      grid-template-columns: minmax(0, 35rem) minmax(0, 1fr);
+    }
+    .partida__top .h-section {
+      margin-block-start: 3.375rem;
+    }
+  }
+  .partida__texto {
+    display: flex;
+    flex-direction: column;
+    gap: 1.625rem;
+    padding-block-start: 3.5rem;
+    color: var(--coffee);
+    max-width: var(--measure);
+  }
+  @media (max-width: 61.999rem) {
+    .partida__texto {
+      padding-block-start: 0;
+    }
+  }
+
+  .pull p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.1875rem, 2vw, 1.3125rem);
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .pull {
+    margin: 0;
+  }
+
+  .rotulo-lista {
+    margin-block-start: clamp(2.75rem, 5vw, 4.5rem);
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+
+  .reconhece {
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .reconhece__item {
+    display: flex;
+    align-items: baseline;
+    gap: clamp(1.25rem, 3vw, 2.5rem);
+    border-block-start: 1px solid var(--hairline);
+    padding-block: 1.625rem;
+  }
+  .reconhece__item:last-child {
+    border-block-end: 1px solid var(--hairline);
+  }
+  .reconhece__num {
+    flex: 0 0 auto;
+    min-width: 2.125rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.18em;
+    color: var(--drift);
+  }
+  .reconhece__txt {
+    font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
+    line-height: 1.5;
+  }
+
+  .fecho {
+    margin-block-start: 2.75rem;
+    max-width: 48rem;
+    font-size: clamp(1.125rem, 1.8vw, 1.3125rem);
+    line-height: 1.6;
+    color: var(--coffee);
+  }
+  .fecho--rule {
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: 1.875rem;
+    color: var(--ink);
+  }
+  .fecho--flush {
+    margin-block-start: 0;
+  }
+
+  /* ---------------- 03 · tese ---------------- */
+  .tese {
+    margin-block-start: clamp(4.5rem, 9vw, 7.75rem);
+    padding-block: clamp(4.5rem, 8vw, 8rem);
+    background: var(--ink);
+    color: var(--silver);
+  }
+  .tese__title {
+    margin-block-start: clamp(2.25rem, 4vw, 3.625rem);
+    max-width: 62rem;
+    font-size: clamp(2.125rem, 4.6vw, 3.5rem);
+    line-height: 1.1;
+    color: var(--alyssum);
+  }
+  .tese__cols {
+    display: grid;
+    gap: clamp(2rem, 5vw, 7.5rem);
+    margin-block-start: clamp(2.5rem, 4vw, 3.875rem);
+  }
+  @media (min-width: 62rem) {
+    .tese__cols {
+      grid-template-columns: minmax(0, 35rem) minmax(0, 1fr);
+    }
+  }
+  .tese__col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: var(--measure);
+  }
+  .tese__col p {
+    line-height: 1.82;
+  }
+  .tese__forte {
+    color: var(--alyssum);
+  }
+  .tese__remate {
+    margin-block-start: clamp(2.75rem, 5vw, 4.375rem);
+    border-block-start: 1px solid var(--hairline-dark);
+    padding-block-start: 2.125rem;
+    max-width: 56rem;
+    font-family: var(--display);
+    font-weight: 200;
+    font-size: clamp(1.375rem, 2.6vw, 1.75rem);
+    line-height: 1.42;
+    letter-spacing: -0.015em;
+    color: var(--alyssum);
+  }
+
+  /* ---------------- 04 · jornadas ---------------- */
+  .jornadas {
+    display: grid;
+    gap: clamp(2.5rem, 4vw, 0rem);
+    margin-block-start: clamp(2.5rem, 4vw, 3.875rem);
+  }
+  @media (min-width: 62rem) {
+    .jornadas {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .jornada {
+      padding-inline-end: 4.5rem;
+    }
+    .jornada--segunda {
+      border-inline-start: 1px solid var(--silver);
+      padding-inline: 4.5rem 0;
+    }
+  }
+  .jornada {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    color: var(--coffee);
+  }
+  .jornada__head {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    font-family: var(--display);
+    font-size: clamp(1.25rem, 2.2vw, 1.5rem);
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .jornada__num {
+    font-family: var(--sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    color: var(--drift);
+  }
+  .jornada__ref {
+    border-block-start: 1px solid var(--hairline);
+    padding-block-start: 1rem;
+    font-size: 0.9375rem;
+  }
+  .jornada__ref span {
+    display: block;
+    margin-block-end: 0.375rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+
+  /* ---------------- 05 · método ---------------- */
+  .metodo__head {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 7.5rem);
+    align-items: end;
+  }
+  @media (min-width: 62rem) {
+    .metodo__head {
+      grid-template-columns: minmax(0, 38rem) minmax(0, 1fr);
+    }
+  }
+
+  .fases {
+    margin: clamp(2.5rem, 4vw, 4rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .fase {
+    display: grid;
+    gap: 0.625rem 3.5rem;
+    border-block-start: 1px solid var(--hairline);
+    padding-block: 2.125rem;
+  }
+  .fase:last-child {
+    border-block-end: 1px solid var(--hairline);
+  }
+  @media (min-width: 62rem) {
+    .fase {
+      grid-template-columns: 5.75rem 18.75rem minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+  .fase__num {
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    color: var(--drift);
+    padding-block-start: 0.4375rem;
+  }
+  .fase__nome {
+    font-family: var(--display);
+    font-size: clamp(1.375rem, 2.4vw, 1.6875rem);
+    font-weight: 300;
+    letter-spacing: -0.015em;
+  }
+  .fase__txt {
+    color: var(--coffee);
+    line-height: 1.75;
+    padding-block-start: 0.3125rem;
+    max-width: var(--measure);
+  }
+
+  /* ---------------- 06 · tabela ---------------- */
+  .difer {
+    width: 100%;
+    margin-block-start: clamp(2.25rem, 4vw, 3.625rem);
+    border-collapse: collapse;
+    text-align: start;
+  }
+  .difer th {
+    font-family: var(--sans);
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift);
+    text-align: start;
+    padding-block-end: 1rem;
+    border-block-end: 1px solid var(--silver);
+  }
+  .difer__nos {
+    color: var(--coffee);
+  }
+  .difer td {
+    vertical-align: top;
+    padding-block: 1.75rem;
+    border-block-end: 1px solid var(--hairline-soft);
+    line-height: 1.6;
+  }
+  .difer tbody tr:last-child td {
+    border-block-end: 1px solid var(--silver);
+  }
+  .difer__mercado {
+    width: 42%;
+    padding-inline-end: clamp(1.5rem, 4vw, 5rem);
+    color: var(--drift);
+  }
+  .difer__feitto {
+    font-size: clamp(1rem, 1.6vw, 1.1875rem);
+    color: var(--ink);
+  }
+  @media (max-width: 47.999rem) {
+    .difer,
+    .difer tbody,
+    .difer tr,
+    .difer td {
+      display: block;
+      width: 100%;
+    }
+    .difer thead {
+      display: none;
+    }
+    .difer tr {
+      border-block-start: 1px solid var(--hairline);
+      padding-block: 1.5rem;
+    }
+    .difer td {
+      border: 0;
+      padding-block: 0.25rem;
+    }
+    .difer__mercado::before {
+      content: 'O mercado faz — ';
+      font-size: 0.6875rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+  }
+
+  /* ---------------- 07 · solidão ---------------- */
+  .solidao {
+    margin-block-start: clamp(4.5rem, 9vw, 7.75rem);
+    padding-block: clamp(4.5rem, 8vw, 8rem);
+    background: var(--creme);
+  }
+  .solidao__pergunta {
+    margin-block-start: clamp(2.25rem, 4vw, 3.5rem);
+    max-width: 62rem;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.75rem, 4vw, 3.125rem);
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+  }
+  .solidao__cols {
+    display: grid;
+    gap: clamp(2rem, 5vw, 7.5rem);
+    margin-block-start: clamp(2.5rem, 4vw, 4rem);
+  }
+  @media (min-width: 62rem) {
+    .solidao__cols {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  .solidao__col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: var(--coffee);
+    max-width: var(--measure);
+  }
+  .solidao__col p {
+    line-height: 1.82;
+  }
+  .solidao__forte {
+    font-size: clamp(1.1875rem, 2vw, 1.375rem);
+    line-height: 1.6;
+    color: var(--ink);
+  }
+
+  .nota {
+    margin-block-start: clamp(2.75rem, 5vw, 4.5rem);
+    border-inline-start: 2px solid var(--drift);
+    padding-inline-start: 2.125rem;
+    max-width: 56rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+    color: var(--coffee);
+  }
+  .nota__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+  .nota__forte {
+    color: var(--ink);
+  }
+
+  /* ---------------- 08 · provas ---------------- */
+  .provas {
+    margin: clamp(2rem, 4vw, 3.25rem) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .prova {
+    display: grid;
+    gap: 0.875rem clamp(2rem, 5vw, 4.5rem);
+    border-block-start: 1px solid var(--hairline);
+    padding-block: 2rem;
+  }
+  .prova:first-child {
+    border-color: var(--silver);
+  }
+  .prova:last-child {
+    border-block-end: 1px solid var(--silver);
+  }
+  @media (min-width: 62rem) {
+    .prova {
+      grid-template-columns: minmax(0, 43.75rem) minmax(0, 1fr);
+      align-items: start;
+    }
+  }
+  .prova__fato {
+    font-size: clamp(1.25rem, 2.2vw, 1.5625rem);
+    line-height: 1.42;
+    letter-spacing: -0.012em;
+  }
+  .prova__empresa {
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coffee);
+    margin-block-end: 0.625rem;
+  }
+  .prova__leitura {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--drift-ink);
+  }
+  .prova__meta {
+    padding-block-start: 0.3125rem;
+  }
+
+  .provas__fecho {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1.5rem 5rem;
+    margin-block-start: 2.375rem;
+  }
+  .provas__ressalva {
+    max-width: 24rem;
+    font-size: 0.75rem;
+    line-height: 1.7;
+    color: var(--drift-ink);
+  }
+  @media (min-width: 62rem) {
+    .provas__ressalva {
+      text-align: end;
+    }
+  }
+
+  /* ---------------- 09 · vozes ---------------- */
+  .voz-grande {
+    margin: clamp(2.25rem, 4vw, 3.375rem) 0 0;
+    max-width: 71.25rem;
+  }
+  .voz-grande p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.375rem, 3vw, 2.125rem);
+    line-height: 1.42;
+    letter-spacing: -0.01em;
+  }
+  .voz-grande footer,
+  .voz footer {
+    margin-block-start: 1.25rem;
+    font-family: var(--sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+
+  .vozes {
+    display: grid;
+    margin-block-start: clamp(2.5rem, 4vw, 4rem);
+  }
+  @media (min-width: 62rem) {
+    .vozes {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .vozes .voz:nth-child(odd) {
+      padding-inline-end: 4.5rem;
+    }
+    .vozes .voz:nth-child(even) {
+      border-inline-start: 1px solid var(--hairline);
+      padding-inline-start: 4.5rem;
+    }
+  }
+  .voz {
+    margin: 0;
+    border-block-start: 1px solid var(--hairline);
+    padding-block: 2.125rem;
+  }
+  .voz p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: clamp(1.0625rem, 1.8vw, 1.25rem);
+    line-height: 1.58;
+    color: var(--coffee);
+  }
+  @media (min-width: 62rem) {
+    .vozes .voz:nth-last-child(-n + 2) {
+      border-block-end: 1px solid var(--hairline);
+    }
+  }
+  @media (max-width: 61.999rem) {
+    .voz:last-child {
+      border-block-end: 1px solid var(--hairline);
+    }
+  }
+
+  /* ---------------- 10 · custo ---------------- */
+  .custo {
+    display: flex;
+    flex-direction: column;
+    gap: 1.875rem;
+    max-width: 48.75rem;
+    margin-block-start: clamp(2.25rem, 4vw, 3.75rem);
+    color: var(--coffee);
+  }
+  @media (min-width: 75rem) {
+    .custo {
+      margin-inline-start: 12.5rem;
+    }
+  }
+  .custo p {
+    line-height: 1.85;
+    font-size: clamp(1rem, 1.5vw, 1.125rem);
+  }
+  .custo__title {
+    font-size: clamp(1.875rem, 3.6vw, 2.75rem);
+    color: var(--ink);
+  }
+  .custo__remate {
+    margin-block-start: 0.75rem;
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: 1.875rem;
+    font-family: var(--display);
+    font-weight: 200;
+    font-size: clamp(1.25rem, 2.4vw, 1.625rem) !important;
+    line-height: 1.48;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+
+  /* ---------------- 11 · cta ---------------- */
+  .cta {
+    display: grid;
+    gap: clamp(2rem, 5vw, 7.5rem);
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: clamp(2.5rem, 4vw, 3.625rem);
+    align-items: start;
+  }
+  @media (min-width: 62rem) {
+    .cta {
+      grid-template-columns: minmax(0, 41.25rem) minmax(0, 1fr);
+    }
+  }
+  .cta__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift);
+    margin-block-end: 1.625rem;
+  }
+  .cta__left .h-section {
+    margin-block-start: 0;
+  }
+  .cta__right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.875rem;
+  }
+  .cta__nota {
+    font-size: 0.9375rem;
+    color: var(--drift-ink);
+  }
+</style>

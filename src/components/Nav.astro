@@ -1,0 +1,226 @@
+---
+import Logo from './Logo.astro';
+import { nav } from '../lib/site';
+
+interface Props {
+  /** sobre a fotografia do hero a barra flutua e inverte as cores */
+  overlay?: boolean;
+  /** rota atual, para marcar o item ativo */
+  current?: string;
+  /** a barra de aviso só aparece nas páginas institucionais */
+  aviso?: boolean;
+}
+const { overlay = false, current, aviso = true } = Astro.props;
+---
+
+{
+  aviso && (
+    <div class="aviso">
+      <span>Vagas limitadas por semestre</span>
+      <span aria-hidden="true">·</span>
+      <span>Diagnóstico aberto</span>
+    </div>
+  )
+}
+
+<header class:list={['nav', overlay && 'nav--overlay']}>
+  <a href="/" class="nav__logo" aria-label="FEITTO, página inicial">
+    <Logo width={132} />
+  </a>
+
+  <button type="button" class="nav__toggle" aria-expanded="false" aria-controls="nav-menu">
+    <span class="visually-hidden">Abrir menu</span>
+    <span class="nav__bar" aria-hidden="true"></span>
+    <span class="nav__bar nav__bar--short" aria-hidden="true"></span>
+  </button>
+
+  <nav id="nav-menu" class="nav__menu" aria-label="Principal">
+    {
+      nav.map((item) => (
+        <a
+          href={item.href}
+          class:list={['nav__link', current === item.href && 'is-current']}
+          aria-current={current === item.href ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))
+    }
+    <a href="/diagnostico" class:list={['btn', overlay ? 'btn--ghost-invert' : 'btn--solid', 'nav__cta']}>
+      Fazer o diagnóstico
+    </a>
+  </nav>
+</header>
+
+<style>
+  .aviso {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    min-height: 2.5rem;
+    padding: 0.5rem var(--gutter);
+    background: var(--coffee);
+    color: var(--creme);
+    font-size: 0.6875rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  .aviso span[aria-hidden] {
+    color: var(--drift);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 5.5rem;
+    padding-inline: var(--gutter);
+    border-block-end: 1px solid var(--hairline);
+    background: var(--alyssum);
+  }
+
+  /* sobre a foto: flutua, sem filete, em cor clara */
+  .nav--overlay {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 10;
+    background: none;
+    border: 0;
+    color: var(--alyssum);
+  }
+
+  .nav__logo {
+    display: flex;
+    align-items: center;
+    color: var(--ink);
+  }
+  .nav--overlay .nav__logo {
+    color: var(--alyssum);
+  }
+
+  .nav__menu {
+    display: none;
+    align-items: center;
+    gap: clamp(1.5rem, 3vw, 2.875rem);
+  }
+
+  .nav__link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding-block: 0.875rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--coffee);
+    border-block-end: 1px solid transparent;
+    transition: border-color 240ms var(--ease), color 240ms var(--ease);
+  }
+  .nav__link:hover,
+  .nav__link.is-current {
+    color: var(--ink);
+    border-color: currentColor;
+  }
+  .nav--overlay .nav__link {
+    color: var(--creme);
+  }
+  .nav--overlay .nav__link:hover,
+  .nav--overlay .nav__link.is-current {
+    color: var(--alyssum);
+  }
+
+  .nav__cta {
+    padding: 0.9375rem 1.625rem;
+  }
+
+  /* botão de menu: dois filetes, o mesmo traço de 1px dos divisores */
+  .nav__toggle {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 0.4375rem;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    color: inherit;
+  }
+  .nav--overlay .nav__toggle {
+    color: var(--alyssum);
+  }
+  .nav:not(.nav--overlay) .nav__toggle {
+    color: var(--ink);
+  }
+
+  .nav__bar {
+    display: block;
+    width: 1.625rem;
+    height: 1px;
+    background: currentColor;
+    transition: transform 320ms var(--ease), opacity 200ms var(--ease);
+  }
+  .nav__bar--short {
+    width: 1.125rem;
+  }
+
+  .nav__toggle[aria-expanded='true'] .nav__bar {
+    transform: translateY(4px) rotate(45deg);
+  }
+  .nav__toggle[aria-expanded='true'] .nav__bar--short {
+    width: 1.625rem;
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
+  @media (min-width: 62rem) {
+    .nav__toggle {
+      display: none;
+    }
+    .nav__menu {
+      display: flex;
+    }
+  }
+
+  /* painel no celular */
+  @media (max-width: 61.999rem) {
+    .nav__menu.is-open {
+      position: absolute;
+      inset-block-start: 100%;
+      inset-inline: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0;
+      padding: 1rem var(--gutter) 2rem;
+      background: var(--ink);
+    }
+    .nav__menu.is-open .nav__link {
+      color: var(--creme);
+      border-block-end: 1px solid var(--hairline-dark);
+      padding-block: 1.25rem;
+    }
+    .nav__menu.is-open .nav__cta {
+      margin-block-start: 1.5rem;
+      justify-content: center;
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.nav__toggle');
+  const menu = document.querySelector<HTMLElement>('#nav-menu');
+
+  toggle?.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!open));
+    menu?.classList.toggle('is-open', !open);
+    toggle.querySelector('.visually-hidden')!.textContent = open ? 'Abrir menu' : 'Fechar menu';
+  });
+</script>

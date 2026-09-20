@@ -1,0 +1,27 @@
+---
+interface Props { num: string; label: string; note?: string; tone?: 'light' | 'dark' | 'creme' }
+const { num, label, note, tone = 'light' } = Astro.props;
+---
+<div class:list={['rule', `rule--${tone}`]} data-reveal>
+  <span class="rule__num">{num}</span>
+  <span class="rule__label">{label}</span>
+  {note && <span class="rule__note">{note}</span>}
+</div>
+
+<style>
+  .rule__label { flex: 1 1 auto; }
+  .rule__note {
+    font-size: 0.8125rem;
+    color: var(--drift-ink);
+    text-align: end;
+    display: none;
+  }
+  @media (min-width: 60rem) { .rule__note { display: block; } }
+
+  .rule--dark { border-color: var(--hairline-dark); }
+  .rule--dark .rule__label { color: var(--silver); }
+  .rule--dark .rule__note { color: var(--drift); }
+
+  .rule--creme { border-color: #a9a296; }
+  .rule--creme .rule__num { color: var(--drift-ink); }
+</style>

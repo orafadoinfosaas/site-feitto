@@ -3,29 +3,35 @@ import Base from '../layouts/Base.astro';
 import Logo from '../components/Logo.astro';
 
 /**
- * Filtro de entrada. Nem valor nem prazo aparecem aqui: a capacidade de
- * investir é lida pelos blocos 05 e 06, e o compromisso pelo bloco 07.
+ * Filtro de entrada, em etapas.
+ * Nem valor nem prazo aparecem aqui: a capacidade de investir é lida pelos
+ * blocos 05 e 06, e o compromisso pelo bloco 07.
+ *
+ * Sem JavaScript todas as etapas ficam visíveis e o formulário funciona como
+ * uma página só — o passo a passo é melhoria progressiva, nunca requisito.
  */
 
 type Campo =
-  | { tipo: 'texto'; id: string; label: string; input?: 'tel' | 'email' | 'text'; obrigatorio?: boolean }
+  | { tipo: 'texto'; id: string; label: string; input?: 'tel' | 'email' | 'text'; obrigatorio?: boolean; meia?: boolean }
   | { tipo: 'longo'; id: string; label: string }
   | { tipo: 'escolha'; id: string; label: string; opcoes: string[]; obrigatorio?: boolean };
 
-interface Bloco {
+interface Etapa {
   n: string;
   nome: string;
+  titulo: string;
   campos: Campo[];
 }
 
-const blocos: Bloco[] = [
+const etapas: Etapa[] = [
   {
     n: '01',
     nome: 'Quem é você',
+    titulo: 'Primeiro, quem está do outro lado.',
     campos: [
       { tipo: 'texto', id: 'nome', label: 'Nome completo', obrigatorio: true },
-      { tipo: 'texto', id: 'empresa', label: 'Empresa e site ou Instagram' },
-      { tipo: 'texto', id: 'whatsapp', label: 'WhatsApp', input: 'tel', obrigatorio: true },
+      { tipo: 'texto', id: 'empresa', label: 'Empresa e site ou Instagram', meia: true },
+      { tipo: 'texto', id: 'whatsapp', label: 'WhatsApp', input: 'tel', obrigatorio: true, meia: true },
       { tipo: 'texto', id: 'email', label: 'E-mail', input: 'email', obrigatorio: true },
       {
         tipo: 'escolha',
@@ -73,6 +79,7 @@ const blocos: Bloco[] = [
   {
     n: '02',
     nome: 'O momento do negócio',
+    titulo: 'Onde a empresa está hoje.',
     campos: [
       {
         tipo: 'escolha',
@@ -94,6 +101,7 @@ const blocos: Bloco[] = [
   {
     n: '03',
     nome: 'Seu comercial hoje',
+    titulo: 'Como a venda acontece.',
     campos: [
       {
         tipo: 'escolha',
@@ -122,6 +130,7 @@ const blocos: Bloco[] = [
   {
     n: '04',
     nome: 'Sua rotina como líder',
+    titulo: 'Como o seu dia se organiza.',
     campos: [
       {
         tipo: 'escolha',
@@ -150,6 +159,7 @@ const blocos: Bloco[] = [
   {
     n: '05',
     nome: 'Estrutura e capacidade',
+    titulo: 'O tamanho da operação.',
     campos: [
       {
         tipo: 'escolha',
@@ -186,6 +196,7 @@ const blocos: Bloco[] = [
   {
     n: '06',
     nome: 'Custo e urgência',
+    titulo: 'O que já ficou para trás.',
     campos: [
       {
         tipo: 'texto',
@@ -208,6 +219,8 @@ const compromisso = [
   'Talvez, preciso entender melhor a profundidade',
   'Não é o momento',
 ];
+
+const total = etapas.length + 1;
 ---
 
 <Base
@@ -217,7 +230,8 @@ const compromisso = [
 >
   <Logo slot="bare-logo" width={132} />
 
-  <section class="shell abertura">
+  <!-- abertura: sai de cena assim que o formulário começa -->
+  <section class="shell abertura" id="abertura">
     <div class="abertura__left">
       <p class="eyebrow">Diagnóstico de Inteligência Comercial</p>
       <h1 class="abertura__title">
@@ -228,9 +242,10 @@ const compromisso = [
         para a gente entender, com honestidade, se o seu momento e o nosso método se encontram.
       </p>
       <p class="lede">Responda com sinceridade, porque é dela que sai uma leitura que presta.</p>
+      <button type="button" class="btn btn--solid abertura__cta" data-comecar>Começar</button>
     </div>
 
-    <aside class="nota" data-reveal>
+    <aside class="nota">
       <p class="nota__rotulo">Antes de você começar</p>
       <p>
         O que você escrever aqui é lido só por mim e pela nossa equipe. Não vira lista, não vira
@@ -239,27 +254,34 @@ const compromisso = [
     </aside>
   </section>
 
-  <nav class="shell trilha" aria-label="Blocos do formulário">
-    <ol>
-      {blocos.map((b) => <li><a href={`#bloco-${b.n}`}>{b.n} {b.nome}</a></li>)}
-      <li><a href="#bloco-07">07 Compromisso</a></li>
-    </ol>
-  </nav>
-
   <form class="shell form" id="diagnostico" novalidate>
-    {
-      blocos.map((bloco) => (
-        <fieldset class="bloco" id={`bloco-${bloco.n}`}>
-          <legend class="visually-hidden">{`Bloco ${bloco.n}: ${bloco.nome}`}</legend>
+    <!-- progresso: o mesmo filete de 1px que abre as seções do site -->
+    <div class="progresso" data-progresso hidden>
+      <div class="progresso__barra">
+        <span class="progresso__feito" data-barra></span>
+      </div>
+      <p class="progresso__texto">
+        <span data-passo-num>01</span> <span aria-hidden="true">/</span> {String(total).padStart(2, '0')}
+        <span class="progresso__sep" aria-hidden="true">·</span>
+        <span data-passo-nome>{etapas[0].nome}</span>
+      </p>
+    </div>
 
-          <div class="rule" data-reveal aria-hidden="true">
-            <span class="rule__num">{bloco.n}</span>
-            <span class="rule__label">{bloco.nome}</span>
+    {
+      etapas.map((etapa, idx) => (
+        <fieldset class="etapa" data-etapa={idx} data-nome={etapa.nome} data-num={etapa.n}>
+          <legend class="visually-hidden">{`Etapa ${etapa.n}: ${etapa.nome}`}</legend>
+
+          <div class="etapa__head">
+            <p class="etapa__rotulo">
+              <span class="etapa__num">{etapa.n}</span> {etapa.nome}
+            </p>
+            <p class="etapa__titulo">{etapa.titulo}</p>
           </div>
 
           <div class="campos">
-            {bloco.campos.map((campo, i) => (
-              <div class:list={['campo', campo.tipo === 'escolha' && 'campo--escolha']} data-reveal data-reveal-step={i}>
+            {etapa.campos.map((campo) => (
+              <div class:list={['campo', campo.tipo === 'texto' && campo.meia && 'campo--meia']}>
                 {campo.tipo === 'texto' && (
                   <>
                     <label for={campo.id}>
@@ -294,18 +316,20 @@ const compromisso = [
                       {campo.label}
                       {campo.obrigatorio && <span class="req" aria-hidden="true"> *</span>}
                     </legend>
-                    {campo.opcoes.map((opcao, j) => (
-                      <label class="opcao" for={`${campo.id}-${j}`}>
-                        <input
-                          id={`${campo.id}-${j}`}
-                          type="radio"
-                          name={campo.id}
-                          value={opcao}
-                          required={campo.obrigatorio && j === 0}
-                        />
-                        <span>{opcao}</span>
-                      </label>
-                    ))}
+                    <div class="opcoes">
+                      {campo.opcoes.map((opcao, j) => (
+                        <label class="opcao" for={`${campo.id}-${j}`}>
+                          <input
+                            id={`${campo.id}-${j}`}
+                            type="radio"
+                            name={campo.id}
+                            value={opcao}
+                            required={campo.obrigatorio && j === 0}
+                          />
+                          <span>{opcao}</span>
+                        </label>
+                      ))}
+                    </div>
                   </fieldset>
                 )}
               </div>
@@ -315,65 +339,83 @@ const compromisso = [
       ))
     }
 
-    <!-- bloco 07: o filtro final -->
-    <fieldset class="bloco bloco--final" id="bloco-07">
-      <legend class="visually-hidden">Bloco 07: Compromisso</legend>
+    <!-- última etapa: o filtro -->
+    <fieldset class="etapa etapa--final" data-etapa={etapas.length} data-nome="Compromisso" data-num="07">
+      <legend class="visually-hidden">Etapa 07: Compromisso</legend>
 
-      <div class="rule rule--creme" data-reveal aria-hidden="true">
-        <span class="rule__num">07</span>
-        <span class="rule__label">Compromisso</span>
+      <div class="etapa__head">
+        <p class="etapa__rotulo"><span class="etapa__num">07</span> Compromisso</p>
+        <p class="etapa__titulo">A última, e a mais direta.</p>
       </div>
 
-      <fieldset class="escolha escolha--final" data-reveal>
-        <legend class="final__pergunta">
-          O nosso trabalho mexe primeiro em como você decide, e isso pede a sua liderança dentro da
-          sala. O ciclo e o investimento saem depois do diagnóstico, quando já sabemos o que o seu
-          caso pede. Você está pronto para esse nível de envolvimento?
-        </legend>
-        {
-          compromisso.map((opcao, j) => (
-            <label class="opcao opcao--final" for={`compromisso-${j}`}>
-              <input id={`compromisso-${j}`} type="radio" name="compromisso" value={opcao} required={j === 0} />
-              <span>{opcao}</span>
-            </label>
-          ))
-        }
-      </fieldset>
+      <div class="campos">
+        <div class="campo">
+          <fieldset class="escolha">
+            <legend class="final__pergunta">
+              O nosso trabalho mexe primeiro em como você decide, e isso pede a sua liderança dentro
+              da sala. O ciclo e o investimento saem depois do diagnóstico, quando já sabemos o que o
+              seu caso pede. Você está pronto para esse nível de envolvimento?
+            </legend>
+            <div class="opcoes">
+              {
+                compromisso.map((opcao, j) => (
+                  <label class="opcao opcao--final" for={`compromisso-${j}`}>
+                    <input id={`compromisso-${j}`} type="radio" name="compromisso" value={opcao} required={j === 0} />
+                    <span>{opcao}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+        </div>
 
-      <div class="lgpd" data-reveal>
-        <input id="lgpd" name="lgpd" type="checkbox" required />
-        <label for="lgpd">
-          Autorizo a FEITTO a tratar os dados acima para analisar o meu caso e entrar em contato,
-          conforme a <a href="/politica-de-privacidade">Política de Privacidade</a>. Posso pedir a
-          exclusão a qualquer momento.
-        </label>
+        <div class="lgpd">
+          <input id="lgpd" name="lgpd" type="checkbox" required />
+          <label for="lgpd">
+            Autorizo a FEITTO a tratar os dados acima para analisar o meu caso e entrar em contato,
+            conforme a <a href="/politica-de-privacidade">Política de Privacidade</a>. Posso pedir a
+            exclusão a qualquer momento.
+          </label>
+        </div>
       </div>
-
-      <p class="erro" id="form-erro" role="alert" hidden></p>
-
-      <button type="submit" class="btn btn--solid enviar">Enviar minhas respostas</button>
     </fieldset>
+
+    <p class="erro" id="form-erro" role="alert" hidden></p>
+
+    <!-- controles: só aparecem quando o passo a passo está ativo -->
+    <div class="controles" data-controles hidden>
+      <button type="button" class="voltar" data-voltar>
+        <span aria-hidden="true">←</span> Voltar
+      </button>
+      <button type="button" class="btn btn--solid" data-avancar>Continuar</button>
+      <button type="submit" class="btn btn--solid" data-enviar hidden>Enviar minhas respostas</button>
+    </div>
+
+    <!-- sem JavaScript o formulário é uma página só e envia direto -->
+    <noscript>
+      <button type="submit" class="btn btn--solid enviar-noscript">Enviar minhas respostas</button>
+    </noscript>
   </form>
 
-  <section class="shell section depois">
-    <div class="rule" data-reveal>
+  <section class="shell section depois" data-depois>
+    <div class="rule">
       <span class="rule__num" aria-hidden="true">→</span>
       <span class="rule__label">O que acontece depois</span>
     </div>
 
     <ol class="passos">
-      <li class="passo" data-reveal>
+      <li class="passo">
         <span class="passo__num">01</span>
         <p>Eu leio pessoalmente. Aqui não tem resposta automática.</p>
       </li>
-      <li class="passo" data-reveal data-reveal-step="1">
+      <li class="passo">
         <span class="passo__num">02</span>
         <p>
           Havendo encaixe, você recebe um contato pelo WhatsApp em até dois dias úteis, já com uma
           primeira leitura do seu caso.
         </p>
       </li>
-      <li class="passo" data-reveal data-reveal-step="2">
+      <li class="passo">
         <span class="passo__num">03</span>
         <p>
           Se não houver, eu te falo isso com clareza e, quando der, aponto um caminho que sirva para
@@ -383,7 +425,6 @@ const compromisso = [
     </ol>
   </section>
 
-  <!-- confirmação: substitui o formulário depois do envio -->
   <section class="confirma" id="confirmacao" hidden tabindex="-1">
     <div class="shell">
       <div class="confirma__grid">
@@ -416,9 +457,13 @@ const compromisso = [
       grid-template-columns: minmax(0, 43.75rem) minmax(0, 1fr);
     }
   }
+  .abertura[hidden] {
+    display: none;
+  }
   .abertura__left {
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     gap: 1.375rem;
   }
   .abertura__title {
@@ -426,6 +471,9 @@ const compromisso = [
     font-size: clamp(2.25rem, 5vw, 3.75rem);
     line-height: 1.06;
     letter-spacing: -0.028em;
+  }
+  .abertura__cta {
+    margin-block-start: 1.375rem;
   }
 
   .nota {
@@ -448,57 +496,119 @@ const compromisso = [
     color: var(--drift-ink);
   }
 
-  /* trilha dos blocos */
-  .trilha {
-    margin-block-start: clamp(3rem, 5vw, 4.75rem);
-  }
-  .trilha ol {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
-    margin: 0;
-    padding: 1.375rem 0;
-    list-style: none;
-    border-block: 1px solid var(--silver);
-    border-block-end-color: var(--hairline);
-  }
-  .trilha a {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    font-size: 0.6875rem;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--drift);
-    border-block-end: 1px solid transparent;
-    transition: color 200ms var(--ease), border-color 200ms var(--ease);
-  }
-  .trilha a:hover {
-    color: var(--ink);
-    border-color: var(--ink);
+  /* ------------------------------------------------------------------ *
+   * formulário
+   * ------------------------------------------------------------------ */
+  .form {
+    padding-block-start: clamp(2.5rem, 5vw, 4rem);
   }
 
-  /* blocos */
-  .form {
-    margin-block-start: clamp(2.5rem, 4vw, 4.25rem);
+  .progresso[hidden] {
+    display: none;
   }
-  .bloco {
-    margin: 0 0 clamp(3rem, 5vw, 4.75rem);
+  .progresso {
+    max-width: 44rem;
+  }
+  .progresso__barra {
+    height: 1px;
+    background: var(--silver);
+  }
+  .progresso__feito {
+    display: block;
+    height: 1px;
+    width: 0;
+    background: var(--ink);
+    transition: width 620ms var(--ease);
+  }
+  .progresso__texto {
+    margin-block-start: 1.125rem;
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--drift);
+  }
+  .progresso__sep {
+    margin-inline: 0.5rem;
+  }
+
+  .etapa {
+    margin: 0;
     padding: 0;
     border: 0;
+    max-width: 44rem;
+  }
+  .etapa[hidden] {
+    display: none;
+  }
+  /* quando o passo a passo está ativo, cada etapa entra como os blocos do site */
+  .is-stepped .etapa:not([hidden]) {
+    animation: entra var(--dur) var(--ease) both;
+  }
+  @keyframes entra {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .is-stepped .etapa:not([hidden]) {
+      animation: none;
+    }
+    .progresso__feito {
+      transition: none;
+    }
   }
 
+  .etapa__head {
+    margin-block: clamp(2.5rem, 5vw, 3.75rem) clamp(2rem, 4vw, 3rem);
+  }
+  /* sem o passo a passo, cada etapa se anuncia com a régua de dossiê */
+  .etapa:not(:first-of-type) .etapa__head {
+    border-block-start: 1px solid var(--silver);
+    padding-block-start: 2.5rem;
+  }
+  .is-stepped .etapa .etapa__head {
+    border: 0;
+    padding-block-start: 0;
+    margin-block-start: clamp(2rem, 4vw, 2.75rem);
+  }
+
+  .etapa__rotulo {
+    font-size: 0.6875rem;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--coffee);
+  }
+  .is-stepped .etapa__rotulo {
+    display: none;
+  }
+  .etapa__num {
+    color: var(--drift);
+    margin-inline-end: 0.75rem;
+  }
+  .etapa__titulo {
+    margin-block-start: 1rem;
+    font-family: var(--display);
+    font-weight: 200;
+    font-size: clamp(1.75rem, 3.6vw, 2.625rem);
+    line-height: 1.12;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+
+  /* uma coluna, com respiro: é o que deixa o formulário leve de responder */
   .campos {
     display: grid;
-    gap: clamp(1.75rem, 3vw, 2.75rem) clamp(2rem, 4vw, 4.5rem);
-    margin-block-start: clamp(1.75rem, 3vw, 2.5rem);
+    gap: clamp(2.25rem, 4vw, 3.25rem);
   }
-  @media (min-width: 62rem) {
+  @media (min-width: 48rem) {
     .campos {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-    .campo--escolha {
+    .campo {
+      grid-column: 1 / -1;
+    }
+    .campo--meia {
       grid-column: span 1;
     }
   }
@@ -506,11 +616,10 @@ const compromisso = [
   .campo {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.875rem;
   }
   .campo > label {
-    font-size: 0.8125rem;
-    letter-spacing: 0.06em;
+    font-size: 0.9375rem;
     color: var(--coffee);
   }
   .req {
@@ -521,9 +630,9 @@ const compromisso = [
   .campo input[type='tel'],
   .campo input[type='email'] {
     min-height: 44px;
-    padding: 0.75rem 0;
+    padding: 0.8125rem 0;
     font-family: var(--sans);
-    font-size: 1.125rem;
+    font-size: 1.1875rem;
     font-weight: 300;
     color: var(--ink);
     background: none;
@@ -535,46 +644,67 @@ const compromisso = [
   .campo input:focus {
     border-color: var(--ink);
   }
+  .campo input:not(:placeholder-shown):valid {
+    border-color: var(--drift);
+  }
 
   .campo textarea {
-    padding: 1rem 1.125rem;
+    padding: 1.125rem 1.25rem;
     font-family: var(--sans);
     font-size: 1.0625rem;
     font-weight: 300;
     line-height: 1.7;
     color: var(--ink);
-    background: #e9e4df;
+    background: none;
     border: 1px solid var(--silver);
     border-radius: 0;
     resize: vertical;
+    transition: border-color 200ms var(--ease);
+  }
+  .campo textarea:focus {
+    border-color: var(--ink);
   }
 
   .escolha {
     margin: 0;
     padding: 0;
     border: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
   }
   .escolha > legend {
     padding: 0;
-    margin-block-end: 0.625rem;
-    font-size: 0.8125rem;
-    letter-spacing: 0.06em;
-    color: var(--coffee);
+    margin-block-end: 1.125rem;
+    font-size: clamp(1rem, 1.6vw, 1.125rem);
+    font-weight: 300;
+    line-height: 1.5;
+    color: var(--ink);
   }
 
+  .opcoes {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* a opção inteira é alvo de toque, e a marca de seleção é um filete */
   .opcao {
     display: flex;
     align-items: flex-start;
-    gap: 0.875rem;
+    gap: 1rem;
     min-height: 44px;
-    padding-block: 0.6875rem;
+    padding: 0.9375rem 0.875rem 0.9375rem 0;
     font-size: 1.0625rem;
     line-height: 1.5;
+    color: var(--coffee);
     cursor: pointer;
     border-block-end: 1px solid var(--hairline-soft);
+    transition: color 180ms var(--ease), border-color 180ms var(--ease);
+  }
+  .opcao:hover {
+    color: var(--ink);
+    border-color: var(--silver);
+  }
+  .opcao:has(input:checked) {
+    color: var(--ink);
+    border-color: var(--ink);
   }
   .opcao input {
     flex: 0 0 auto;
@@ -585,42 +715,25 @@ const compromisso = [
     cursor: pointer;
   }
 
-  /* bloco final */
-  .bloco--final {
-    margin-block-start: clamp(2rem, 4vw, 3rem);
-    padding: clamp(2.5rem, 5vw, 4.5rem) var(--gutter) clamp(3rem, 5vw, 5rem);
-    margin-inline: calc(var(--gutter) * -1);
-    background: var(--creme);
-  }
-  .escolha--final {
-    margin-block-start: clamp(1.75rem, 3vw, 2.5rem);
-    max-width: 58.75rem;
-  }
   .final__pergunta {
-    font-size: clamp(1.125rem, 2vw, 1.5rem);
-    font-weight: 300;
-    line-height: 1.5;
-    color: var(--ink);
-    margin-block-end: 1.125rem;
+    font-size: clamp(1.0625rem, 1.8vw, 1.3125rem) !important;
+    line-height: 1.55 !important;
   }
   .opcao--final {
-    font-size: clamp(1rem, 1.6vw, 1.125rem);
-    padding-block: 1rem;
-    border-block-end-color: var(--creme-rule);
+    padding-block: 1.125rem;
   }
 
   .lgpd {
     display: flex;
     align-items: flex-start;
     gap: 1rem;
-    max-width: 58.75rem;
-    margin-block-start: 2.5rem;
+    grid-column: 1 / -1;
   }
   .lgpd input {
     flex: 0 0 auto;
     width: 1rem;
     height: 1rem;
-    margin-block-start: 0.375rem;
+    margin-block-start: 0.3125rem;
     accent-color: var(--ink);
     cursor: pointer;
   }
@@ -637,24 +750,67 @@ const compromisso = [
   }
 
   .erro {
-    margin-block-start: 1.5rem;
-    max-width: 48rem;
+    max-width: 44rem;
+    margin-block-start: 2rem;
+    border-inline-start: 2px solid var(--ink);
+    padding-inline-start: 1.125rem;
     font-size: 0.9375rem;
     line-height: 1.7;
     color: var(--coffee);
-    border-inline-start: 2px solid var(--ink);
-    padding-inline-start: 1rem;
   }
   .erro[hidden] {
     display: none;
   }
 
-  .enviar {
+  .controles {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 44rem;
+    margin-block-start: clamp(2.5rem, 4vw, 3.5rem);
+    border-block-start: 1px solid var(--hairline);
+    padding-block-start: 1.75rem;
+  }
+  .controles[hidden] {
+    display: none;
+  }
+  .voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    min-height: 44px;
+    padding: 0;
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+    background: none;
+    border: 0;
+    cursor: pointer;
+    transition: color 200ms var(--ease);
+  }
+  .voltar:hover {
+    color: var(--ink);
+  }
+  .voltar[hidden] {
+    visibility: hidden;
+  }
+  .controles .btn {
+    margin-inline-start: auto;
+  }
+  .controles .btn[hidden] {
+    display: none;
+  }
+
+  .enviar-noscript {
     margin-block-start: 2.5rem;
-    padding: 1.3125rem 2.25rem;
   }
 
   /* o que acontece depois */
+  .depois[hidden] {
+    display: none;
+  }
   .passos {
     display: grid;
     gap: 2rem 0;
@@ -736,10 +892,20 @@ const compromisso = [
 
 <script>
   const form = document.querySelector<HTMLFormElement>('#diagnostico')!;
+  const abertura = document.querySelector<HTMLElement>('#abertura')!;
+  const comecar = document.querySelector<HTMLButtonElement>('[data-comecar]')!;
+  const etapas = [...form.querySelectorAll<HTMLFieldSetElement>('.etapa')];
+  const progresso = form.querySelector<HTMLElement>('[data-progresso]')!;
+  const barra = form.querySelector<HTMLElement>('[data-barra]')!;
+  const passoNum = form.querySelector<HTMLElement>('[data-passo-num]')!;
+  const passoNome = form.querySelector<HTMLElement>('[data-passo-nome]')!;
+  const controles = form.querySelector<HTMLElement>('[data-controles]')!;
+  const btnVoltar = form.querySelector<HTMLButtonElement>('[data-voltar]')!;
+  const btnAvancar = form.querySelector<HTMLButtonElement>('[data-avancar]')!;
+  const btnEnviar = form.querySelector<HTMLButtonElement>('[data-enviar]')!;
   const erro = document.querySelector<HTMLElement>('#form-erro')!;
+  const depois = document.querySelector<HTMLElement>('[data-depois]')!;
   const confirmacao = document.querySelector<HTMLElement>('#confirmacao')!;
-  const trilha = document.querySelector<HTMLElement>('.trilha')!;
-  const depois = document.querySelector<HTMLElement>('.depois')!;
 
   /**
    * [PENDENTE] Endpoint de recebimento. Enquanto estiver vazio, o envio segue
@@ -748,22 +914,88 @@ const compromisso = [
    */
   const ENDPOINT = '';
 
+  const ultima = etapas.length - 1;
+  let atual = 0;
+
+  // a partir daqui o formulário é uma coisa só na tela: um passo por vez
+  form.classList.add('is-stepped');
+  progresso.hidden = false;
+  controles.hidden = false;
+  mostrar(0, { rolar: false });
+
+  function mostrar(indice: number, opcoes: { rolar?: boolean } = {}) {
+    atual = Math.max(0, Math.min(indice, ultima));
+
+    etapas.forEach((etapa, i) => {
+      etapa.hidden = i !== atual;
+      // campo escondido não entra na validação nem no foco por Tab
+      etapa.disabled = i !== atual;
+    });
+
+    const etapa = etapas[atual];
+    passoNum.textContent = etapa.dataset.num ?? '';
+    passoNome.textContent = etapa.dataset.nome ?? '';
+    barra.style.width = `${((atual + 1) / etapas.length) * 100}%`;
+
+    btnVoltar.hidden = atual === 0;
+    btnAvancar.hidden = atual === ultima;
+    btnEnviar.hidden = atual !== ultima;
+    erro.hidden = true;
+
+    if (opcoes.rolar !== false) {
+      progresso.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    etapa.querySelector<HTMLElement>('input, textarea')?.focus({ preventScroll: true });
+  }
+
+  /** Valida só a etapa visível: as outras estão disabled e ficam de fora. */
+  function etapaValida(): boolean {
+    const campos = [...etapas[atual].querySelectorAll<HTMLInputElement>('input, textarea')];
+    for (const campo of campos) {
+      if (!campo.checkValidity()) {
+        campo.reportValidity();
+        campo.focus({ preventScroll: true });
+        return false;
+      }
+    }
+    return true;
+  }
+
+  comecar.addEventListener('click', () => {
+    abertura.hidden = true;
+    depois.hidden = true;
+    mostrar(0);
+  });
+
+  btnAvancar.addEventListener('click', () => {
+    if (etapaValida()) mostrar(atual + 1);
+  });
+
+  btnVoltar.addEventListener('click', () => mostrar(atual - 1));
+
+  // Enter avança em vez de enviar, exceto na última etapa
+  form.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter') return;
+    const alvo = event.target as HTMLElement;
+    if (alvo.tagName === 'TEXTAREA') return;
+    if (atual !== ultima) {
+      event.preventDefault();
+      if (etapaValida()) mostrar(atual + 1);
+    }
+  });
+
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
     erro.hidden = true;
+    if (!etapaValida()) return;
 
-    if (!form.reportValidity()) {
-      const invalido = form.querySelector<HTMLElement>(':invalid');
-      invalido?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      invalido?.focus({ preventScroll: true });
-      return;
-    }
+    btnEnviar.disabled = true;
+    btnEnviar.textContent = 'Enviando…';
 
-    const botao = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
-    botao.disabled = true;
-    botao.textContent = 'Enviando…';
-
+    // as etapas estão disabled, então FormData sozinho viria vazia
+    for (const etapa of etapas) etapa.disabled = false;
     const dados = Object.fromEntries(new FormData(form).entries());
+    for (const [i, etapa] of etapas.entries()) etapa.disabled = i !== atual;
 
     try {
       if (ENDPOINT) {
@@ -778,18 +1010,17 @@ const compromisso = [
       }
 
       form.hidden = true;
-      trilha.hidden = true;
+      abertura.hidden = true;
       depois.hidden = true;
       confirmacao.hidden = false;
       confirmacao.scrollIntoView({ behavior: 'smooth', block: 'start' });
       confirmacao.focus({ preventScroll: true });
     } catch {
-      botao.disabled = false;
-      botao.textContent = 'Enviar minhas respostas';
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = 'Enviar minhas respostas';
       erro.hidden = false;
       erro.textContent =
         'Não consegui enviar agora. Tente de novo em instantes ou me escreva em contato@feitto.com.br que eu leio do mesmo jeito.';
-      erro.scrollIntoView({ block: 'center', behavior: 'smooth' });
     }
   });
 </script>

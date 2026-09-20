@@ -441,7 +441,8 @@ const vozes = [
     flex-direction: column;
     justify-content: flex-end;
     min-height: min(92svh, 56rem);
-    padding-block: 9rem clamp(3rem, 6vw, 5.25rem);
+    /* folga para a faixa de aviso mais a navegação, que flutuam por cima */
+    padding-block: clamp(10rem, 22vh, 13rem) clamp(3rem, 6vw, 5.25rem);
     isolation: isolate;
     background: var(--ink);
   }

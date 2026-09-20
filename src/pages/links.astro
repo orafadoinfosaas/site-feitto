@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import Logo from '../components/Logo.astro';
 import { site } from '../lib/site';
+import CookieConsent from '../components/CookieConsent.astro';
 import '../styles/global.css';
 import retrato from '../assets/luana-sorriso.jpg';
 
@@ -27,12 +28,7 @@ const canonical = new URL('/links', Astro.site);
     <meta name="theme-color" content="#1C1619" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="/fonts/Author-ExtraLight.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,300;1,300&family=Outfit:wght@200;300;400&display=swap"
-    />
+    <link rel="preload" href="/fonts/outfit-normal-latin.woff2" as="font" type="font/woff2" crossorigin />
     <script is:inline>
       document.documentElement.classList.remove('no-js');
     </script>
@@ -119,8 +115,15 @@ const canonical = new URL('/links', Astro.site);
 
     <footer class="rodape">
       <p class="rodape__assinatura">{site.assinatura}</p>
+      <nav class="rodape__legal" aria-label="Legal">
+        <a href="/politica-de-privacidade">Privacidade</a>
+        <a href="/termos-de-uso">Termos</a>
+        <button type="button" data-open-consent>Cookies</button>
+      </nav>
       <p class="rodape__marca">FEITTO. · {site.categoria}</p>
     </footer>
+
+    <CookieConsent />
   </body>
 </html>
 
@@ -292,6 +295,32 @@ const canonical = new URL('/links', Astro.site);
     font-weight: 300;
     font-size: 1.0625rem;
   }
+  .rodape__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem 1.25rem;
+    margin-block: 0.25rem;
+  }
+  .rodape__legal a,
+  .rodape__legal button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0;
+    font-family: var(--sans);
+    font-size: 0.8125rem;
+    font-weight: 300;
+    color: var(--drift-ink);
+    text-decoration: none;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .rodape__legal a:hover,
+  .rodape__legal button:hover {
+    color: var(--ink);
+  }
+
   .rodape__marca {
     font-size: 0.6875rem;
     letter-spacing: 0.2em;

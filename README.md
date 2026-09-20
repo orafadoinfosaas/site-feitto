@@ -9,6 +9,7 @@ npm install
 npm run dev      # http://localhost:4321
 npm run build    # gera dist/
 npm run check    # tipos e diagnósticos do Astro
+npm run test     # build + fluxo de consentimento num navegador real
 ```
 
 ## Rotas
@@ -119,7 +120,20 @@ marcada e fechar não vale como consentimento. O registro guarda id anônimo,
 data, categorias e a versão da política; vale seis meses, e política nova
 invalida a escolha antiga.
 
-O link do rodapé (`data-open-consent`) reabre o painel em qualquer página.
+O link do rodapé (`data-open-consent`) reabre o painel em qualquer página,
+inclusive na `/links`, que não usa o layout padrão.
+
+**As fontes são servidas pelo próprio domínio.** Google Fonts por CDN
+entregaria o IP de cada visitante a um terceiro antes de qualquer
+consentimento, o que não se sustenta sob a LGPD. O `unicode-range` faz o
+navegador buscar só o subset necessário: em português, `latin-ext` nunca desce.
+
+**O fluxo é testado, não presumido.** `tests/consentimento.test.ts` sobe o
+`dist/` num servidor, abre num Chromium real e bloqueia toda requisição que
+não seja do próprio site — é assim que se prova que nada de terceiro carrega
+antes do aceite. São 46 verificações: padrão negado, aceitar, recusar, editar
+no painel, escolha vencida, política nova, as oito rotas e o retorno pelo
+rodapé.
 
 ## Pendências
 

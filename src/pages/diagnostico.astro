@@ -12,9 +12,32 @@ import Logo from '../components/Logo.astro';
  */
 
 type Campo =
-  | { tipo: 'texto'; id: string; label: string; input?: 'tel' | 'email' | 'text'; obrigatorio?: boolean; meia?: boolean }
-  | { tipo: 'longo'; id: string; label: string }
-  | { tipo: 'escolha'; id: string; label: string; opcoes: string[]; obrigatorio?: boolean };
+  | {
+      tipo: 'texto';
+      id: string;
+      label: string;
+      input?: 'tel' | 'email' | 'text';
+      obrigatorio?: boolean;
+      meia?: boolean;
+      ajuda?: string;
+      mostrarSe?: Condicao;
+    }
+  | { tipo: 'longo'; id: string; label: string; ajuda?: string; mostrarSe?: Condicao }
+  | {
+      tipo: 'escolha';
+      id: string;
+      label: string;
+      opcoes: string[];
+      obrigatorio?: boolean;
+      ajuda?: string;
+      mostrarSe?: Condicao;
+    };
+
+/** Campo que só aparece quando outro campo tem determinado valor. */
+interface Condicao {
+  campo: string;
+  valor: string;
+}
 
 interface Etapa {
   n: string;
@@ -23,64 +46,30 @@ interface Etapa {
   campos: Campo[];
 }
 
+const EM_OPERACAO = 'Tenho uma empresa em operação, com faturamento recorrente';
+const ESTRUTURANDO = 'Estou estruturando um negócio novo ou em transição de carreira';
+
+/**
+ * Ordem pensada para a conversão, e não para a conveniência do cadastro:
+ * a pessoa se reconhece, descreve o que trava, se qualifica e só então se
+ * identifica. Contato é a última etapa, quando já houve investimento.
+ *
+ * A primeira pergunta bifurca o formulário: quem opera responde faturamento,
+ * quem está fundando responde renda pessoal. Ninguém vê as duas.
+ */
 const etapas: Etapa[] = [
   {
     n: '01',
-    nome: 'Quem é você',
-    titulo: 'Primeiro, quem está do outro lado.',
+    nome: 'Seu momento',
+    titulo: 'Vamos começar por onde você está.',
     campos: [
-      { tipo: 'texto', id: 'nome', label: 'Nome completo', obrigatorio: true },
-      { tipo: 'texto', id: 'empresa', label: 'Empresa e site ou Instagram', meia: true },
-      { tipo: 'texto', id: 'whatsapp', label: 'WhatsApp', input: 'tel', obrigatorio: true, meia: true },
-      { tipo: 'texto', id: 'email', label: 'E-mail', input: 'email', obrigatorio: true },
-      {
-        tipo: 'escolha',
-        id: 'chegada',
-        label: 'Como você chegou até a FEITTO?',
-        opcoes: ['Indicação de alguém', 'Instagram', 'LinkedIn', 'Busca no Google', 'Outro'],
-      },
-      { tipo: 'texto', id: 'indicou', label: 'Se foi indicação, de quem?' },
-      {
-        tipo: 'escolha',
-        id: 'papel',
-        label: 'Qual o seu papel na empresa?',
-        opcoes: [
-          'Sou fundador(a) ou sócio(a) e decido sobre investimentos',
-          'Sou da liderança e influencio, mas não decido sozinho',
-          'Sou de outra área ou estou pesquisando para alguém',
-        ],
-      },
       {
         tipo: 'escolha',
         id: 'momento',
         label: 'Qual é o seu momento?',
-        opcoes: [
-          'Tenho uma empresa em operação, com faturamento recorrente',
-          'Estou estruturando um negócio novo ou em transição de carreira',
-        ],
+        opcoes: [EM_OPERACAO, ESTRUTURANDO],
         obrigatorio: true,
       },
-      {
-        tipo: 'escolha',
-        id: 'segmento',
-        label: 'Em que segmento você atua, ou vai atuar?',
-        opcoes: [
-          'Serviços profissionais B2B',
-          'Saúde',
-          'Arquitetura, engenharia ou construção',
-          'Comunicação, marketing ou educação',
-          'Varejo especializado ou alto padrão',
-          'Indústria ou distribuição',
-          'Outro',
-        ],
-      },
-    ],
-  },
-  {
-    n: '02',
-    nome: 'O momento do negócio',
-    titulo: 'Onde a empresa está hoje.',
-    campos: [
       {
         tipo: 'escolha',
         id: 'frase',
@@ -93,15 +82,32 @@ const etapas: Etapa[] = [
           'Tenho a ideia e a reputação, mas o negócio ainda não saiu do papel',
           'Está tudo estruturado e previsível, quero apenas otimizar pontos',
         ],
+        obrigatorio: true,
       },
-      { tipo: 'longo', id: 'obstaculo', label: 'Qual é hoje o maior obstáculo para o crescimento do seu negócio?' },
-      { tipo: 'longo', id: 'adiando', label: 'Qual decisão importante você sabe que precisa tomar e vem adiando?' },
+    ],
+  },
+  {
+    n: '02',
+    nome: 'O que trava',
+    titulo: 'O que está travando.',
+    campos: [
+      {
+        tipo: 'longo',
+        id: 'obstaculo',
+        label: 'Qual é hoje o maior obstáculo para o crescimento do seu negócio?',
+        ajuda: 'Escreva do seu jeito. É aqui que a leitura começa.',
+      },
+      {
+        tipo: 'longo',
+        id: 'adiando',
+        label: 'Qual decisão importante você sabe que precisa tomar e vem adiando?',
+      },
     ],
   },
   {
     n: '03',
-    nome: 'Seu comercial hoje',
-    titulo: 'Como a venda acontece.',
+    nome: 'Como você vende',
+    titulo: 'Como a venda acontece hoje.',
     campos: [
       {
         tipo: 'escolha',
@@ -113,35 +119,7 @@ const etapas: Etapa[] = [
           'Temos processo, mas sem previsibilidade de crescimento',
           'Temos processo, metas e previsibilidade consolidados',
         ],
-      },
-      {
-        tipo: 'escolha',
-        id: 'contrataria',
-        label:
-          'Você contrataria uma consultoria hoje sabendo que a estruturação começa pela liderança e pela cultura, e não por scripts prontos?',
-        opcoes: [
-          'Sim, é exatamente isso que eu procuro',
-          'Talvez, preciso entender melhor a profundidade',
-          'Não, o que eu quero é técnica rápida para o time',
-        ],
-      },
-    ],
-  },
-  {
-    n: '04',
-    nome: 'Sua rotina como líder',
-    titulo: 'Como o seu dia se organiza.',
-    campos: [
-      {
-        tipo: 'escolha',
-        id: 'rotina',
-        label: 'Como você descreveria sua rotina?',
-        opcoes: [
-          'Apago incêndios o tempo todo',
-          'Centralizo decisões para manter controle',
-          'Domino o cenário atual, mas me sinto travado para expandir',
-          'Rotina organizada, delego com tranquilidade',
-        ],
+        obrigatorio: true,
       },
       {
         tipo: 'escolha',
@@ -157,70 +135,172 @@ const etapas: Etapa[] = [
     ],
   },
   {
+    n: '04',
+    nome: 'Como você lidera',
+    titulo: 'Como você lidera.',
+    campos: [
+      {
+        tipo: 'escolha',
+        id: 'rotina',
+        label: 'Como você descreveria sua rotina?',
+        opcoes: [
+          'Apago incêndios o tempo todo',
+          'Centralizo decisões para manter controle',
+          'Domino o cenário atual, mas me sinto travado para expandir',
+          'Rotina organizada, delego com tranquilidade',
+        ],
+        obrigatorio: true,
+      },
+      {
+        tipo: 'escolha',
+        id: 'contrataria',
+        label:
+          'Você contrataria uma consultoria hoje sabendo que a estruturação começa pela liderança e pela cultura, e não por scripts prontos?',
+        opcoes: [
+          'Sim, é exatamente isso que eu procuro',
+          'Talvez, preciso entender melhor a profundidade',
+          'Não, o que eu quero é técnica rápida para o time',
+        ],
+        obrigatorio: true,
+      },
+    ],
+  },
+  {
     n: '05',
-    nome: 'Estrutura e capacidade',
+    nome: 'A operação',
     titulo: 'O tamanho da operação.',
     campos: [
       {
         tipo: 'escolha',
         id: 'faturamento',
-        label: 'Se você já tem empresa em operação: faturamento médio mensal',
+        label: 'Faturamento médio mensal da empresa',
         opcoes: [
           'Até R$ 30 mil',
           'R$ 30 mil a R$ 50 mil',
           'R$ 50 mil a R$ 200 mil',
           'R$ 200 mil a R$ 1 milhão',
           'Acima de R$ 1 milhão',
-          'Ainda não tenho empresa em operação',
         ],
+        obrigatorio: true,
+        mostrarSe: { campo: 'momento', valor: EM_OPERACAO },
       },
       {
         tipo: 'escolha',
         id: 'renda',
-        label: 'Se o negócio ainda está sendo estruturado: sua renda pessoal média mensal hoje',
-        opcoes: [
-          'Até R$ 30 mil',
-          'R$ 30 mil a R$ 60 mil',
-          'Acima de R$ 60 mil',
-          'Não se aplica, já tenho empresa faturando',
-        ],
+        label: 'Sua renda pessoal média mensal hoje',
+        ajuda: 'O negócio ainda está sendo estruturado, então é a sua renda que dá a referência.',
+        opcoes: ['Até R$ 30 mil', 'R$ 30 mil a R$ 60 mil', 'Acima de R$ 60 mil'],
+        obrigatorio: true,
+        mostrarSe: { campo: 'momento', valor: ESTRUTURANDO },
       },
       {
         tipo: 'escolha',
         id: 'equipe',
         label: 'Quantas pessoas compõem sua equipe hoje?',
         opcoes: ['Apenas eu', '2 a 5 pessoas', '6 a 15 pessoas', 'Mais de 15 pessoas'],
+        obrigatorio: true,
+      },
+      {
+        tipo: 'escolha',
+        id: 'segmento',
+        label: 'Em que segmento você atua, ou vai atuar?',
+        opcoes: [
+          'Serviços profissionais B2B',
+          'Saúde',
+          'Arquitetura, engenharia ou construção',
+          'Comunicação, marketing ou educação',
+          'Varejo especializado ou alto padrão',
+          'Indústria ou distribuição',
+          'Outro',
+        ],
+        obrigatorio: true,
+      },
+      {
+        tipo: 'texto',
+        id: 'segmentoOutro',
+        label: 'Qual?',
+        mostrarSe: { campo: 'segmento', valor: 'Outro' },
       },
     ],
   },
   {
     n: '06',
-    nome: 'Custo e urgência',
-    titulo: 'O que já ficou para trás.',
+    nome: 'O custo de esperar',
+    titulo: 'O custo de esperar.',
     campos: [
       {
         tipo: 'texto',
         id: 'mesa',
         label:
           'Quanto você estima ter deixado na mesa nos últimos doze meses por falta de uma operação comercial previsível?',
+        ajuda: 'Um número aproximado basta. Ninguém vai cobrar exatidão.',
       },
       {
         tipo: 'escolha',
         id: 'prazo',
         label: 'Em quanto tempo você quer que a mudança comece?',
         opcoes: ['Agora, é prioridade', 'Nos próximos 1 a 3 meses', 'Ainda estou pesquisando'],
+        obrigatorio: true,
+      },
+    ],
+  },
+  {
+    n: '07',
+    nome: 'Compromisso',
+    titulo: 'A mais direta de todas.',
+    campos: [
+      {
+        tipo: 'escolha',
+        id: 'compromisso',
+        label:
+          'O nosso trabalho mexe primeiro em como você decide, e isso pede a sua liderança dentro da sala. O ciclo e o investimento saem depois do diagnóstico, quando já sabemos o que o seu caso pede. Você está pronto para esse nível de envolvimento?',
+        opcoes: [
+          'Sim, é o tipo de trabalho que eu procuro',
+          'Talvez, preciso entender melhor a profundidade',
+          'Não é o momento',
+        ],
+        obrigatorio: true,
+      },
+    ],
+  },
+  {
+    n: '08',
+    nome: 'Por onde eu te respondo',
+    titulo: 'Por onde eu te respondo.',
+    campos: [
+      { tipo: 'texto', id: 'nome', label: 'Nome completo', obrigatorio: true },
+      { tipo: 'texto', id: 'whatsapp', label: 'WhatsApp', input: 'tel', obrigatorio: true, meia: true },
+      { tipo: 'texto', id: 'email', label: 'E-mail', input: 'email', obrigatorio: true, meia: true },
+      { tipo: 'texto', id: 'empresa', label: 'Empresa e site ou Instagram' },
+      {
+        tipo: 'escolha',
+        id: 'papel',
+        label: 'Qual o seu papel na empresa?',
+        opcoes: [
+          'Sou fundador(a) ou sócio(a) e decido sobre investimentos',
+          'Sou da liderança e influencio, mas não decido sozinho',
+          'Sou de outra área ou estou pesquisando para alguém',
+        ],
+        obrigatorio: true,
+      },
+      {
+        tipo: 'escolha',
+        id: 'chegada',
+        label: 'Como você chegou até a FEITTO?',
+        opcoes: ['Indicação de alguém', 'Instagram', 'LinkedIn', 'Busca no Google', 'Outro'],
+        obrigatorio: true,
+      },
+      {
+        tipo: 'texto',
+        id: 'indicou',
+        label: 'De quem?',
+        mostrarSe: { campo: 'chegada', valor: 'Indicação de alguém' },
       },
     ],
   },
 ];
 
-const compromisso = [
-  'Sim, é o tipo de trabalho que eu procuro',
-  'Talvez, preciso entender melhor a profundidade',
-  'Não é o momento',
-];
-
-const total = etapas.length + 1;
+const total = etapas.length;
 ---
 
 <Base
@@ -281,18 +361,24 @@ const total = etapas.length + 1;
 
           <div class="campos">
             {etapa.campos.map((campo) => (
-              <div class:list={['campo', campo.tipo === 'texto' && campo.meia && 'campo--meia']}>
+              <div
+                class:list={['campo', campo.tipo === 'texto' && campo.meia && 'campo--meia']}
+                data-se-campo={campo.mostrarSe?.campo}
+                data-se-valor={campo.mostrarSe?.valor}
+                data-req={campo.tipo !== 'longo' && campo.obrigatorio ? 'sim' : undefined}
+              >
                 {campo.tipo === 'texto' && (
                   <>
                     <label for={campo.id}>
                       {campo.label}
                       {campo.obrigatorio && <span class="req" aria-hidden="true"> *</span>}
                     </label>
+                    {campo.ajuda && <p class="campo__ajuda">{campo.ajuda}</p>}
                     <input
                       id={campo.id}
                       name={campo.id}
                       type={campo.input ?? 'text'}
-                      required={campo.obrigatorio}
+                      required={campo.obrigatorio && !campo.mostrarSe}
                       autocomplete={
                         campo.id === 'nome' ? 'name'
                         : campo.id === 'email' ? 'email'
@@ -306,6 +392,7 @@ const total = etapas.length + 1;
                 {campo.tipo === 'longo' && (
                   <>
                     <label for={campo.id}>{campo.label}</label>
+                    {campo.ajuda && <p class="campo__ajuda">{campo.ajuda}</p>}
                     <textarea id={campo.id} name={campo.id} rows="3" />
                   </>
                 )}
@@ -316,6 +403,7 @@ const total = etapas.length + 1;
                       {campo.label}
                       {campo.obrigatorio && <span class="req" aria-hidden="true"> *</span>}
                     </legend>
+                    {campo.ajuda && <p class="campo__ajuda campo__ajuda--solta">{campo.ajuda}</p>}
                     <div class="opcoes">
                       {campo.opcoes.map((opcao, j) => (
                         <label class="opcao" for={`${campo.id}-${j}`}>
@@ -324,7 +412,7 @@ const total = etapas.length + 1;
                             type="radio"
                             name={campo.id}
                             value={opcao}
-                            required={campo.obrigatorio && j === 0}
+                            required={campo.obrigatorio && !campo.mostrarSe && j === 0}
                           />
                           <span>{opcao}</span>
                         </label>
@@ -334,51 +422,22 @@ const total = etapas.length + 1;
                 )}
               </div>
             ))}
+
+            {/* o consentimento fecha a última etapa, ao lado dos dados de contato */}
+            {idx === etapas.length - 1 && (
+              <div class="lgpd">
+                <input id="lgpd" name="lgpd" type="checkbox" required />
+                <label for="lgpd">
+                  Autorizo a FEITTO a tratar os dados acima para analisar o meu caso e entrar em
+                  contato, conforme a <a href="/politica-de-privacidade">Política de Privacidade</a>.
+                  Posso pedir a exclusão a qualquer momento.
+                </label>
+              </div>
+            )}
           </div>
         </fieldset>
       ))
     }
-
-    <!-- última etapa: o filtro -->
-    <fieldset class="etapa etapa--final" data-etapa={etapas.length} data-nome="Compromisso" data-num="07">
-      <legend class="visually-hidden">Etapa 07: Compromisso</legend>
-
-      <div class="etapa__head">
-        <p class="etapa__rotulo"><span class="etapa__num">07</span> Compromisso</p>
-        <p class="etapa__titulo">A última, e a mais direta.</p>
-      </div>
-
-      <div class="campos">
-        <div class="campo">
-          <fieldset class="escolha">
-            <legend class="final__pergunta">
-              O nosso trabalho mexe primeiro em como você decide, e isso pede a sua liderança dentro
-              da sala. O ciclo e o investimento saem depois do diagnóstico, quando já sabemos o que o
-              seu caso pede. Você está pronto para esse nível de envolvimento?
-            </legend>
-            <div class="opcoes">
-              {
-                compromisso.map((opcao, j) => (
-                  <label class="opcao opcao--final" for={`compromisso-${j}`}>
-                    <input id={`compromisso-${j}`} type="radio" name="compromisso" value={opcao} required={j === 0} />
-                    <span>{opcao}</span>
-                  </label>
-                ))
-              }
-            </div>
-          </fieldset>
-        </div>
-
-        <div class="lgpd">
-          <input id="lgpd" name="lgpd" type="checkbox" required />
-          <label for="lgpd">
-            Autorizo a FEITTO a tratar os dados acima para analisar o meu caso e entrar em contato,
-            conforme a <a href="/politica-de-privacidade">Política de Privacidade</a>. Posso pedir a
-            exclusão a qualquer momento.
-          </label>
-        </div>
-      </div>
-    </fieldset>
 
     <p class="erro" id="form-erro" role="alert" hidden></p>
 
@@ -618,12 +677,29 @@ const total = etapas.length + 1;
     flex-direction: column;
     gap: 0.875rem;
   }
+  /* sem JavaScript todo campo condicional aparece, e nenhum é obrigatório.
+     Com JavaScript o CSS os esconde antes da primeira pintura, e o script
+     revela apenas o que a resposta anterior pedir. */
+  :global(html:not(.no-js)) .campo[data-se-campo]:not([data-ativo]) {
+    display: none;
+  }
   .campo > label {
     font-size: 0.9375rem;
     color: var(--coffee);
   }
   .req {
     color: var(--drift);
+  }
+
+  /* uma linha de contexto onde a pergunta sozinha deixaria dúvida */
+  .campo__ajuda {
+    margin-block-start: -0.375rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--drift-ink);
+  }
+  .campo__ajuda--solta {
+    margin-block: -0.5rem 1rem;
   }
 
   .campo input[type='text'],
@@ -715,12 +791,14 @@ const total = etapas.length + 1;
     cursor: pointer;
   }
 
-  .final__pergunta {
-    font-size: clamp(1.0625rem, 1.8vw, 1.3125rem) !important;
-    line-height: 1.55 !important;
+  /* a pergunta de compromisso é a única da etapa, então pesa mais */
+  .etapa[data-num='07'] .escolha > legend {
+    font-size: clamp(1.0625rem, 1.9vw, 1.375rem);
+    line-height: 1.55;
   }
-  .opcao--final {
+  .etapa[data-num='07'] .opcao {
     padding-block: 1.125rem;
+    font-size: clamp(1.0625rem, 1.6vw, 1.125rem);
   }
 
   .lgpd {
@@ -914,23 +992,128 @@ const total = etapas.length + 1;
    */
   const ENDPOINT = '';
 
+  /** Rascunho local, para quem fecha a aba no meio. Apagado ao enviar. */
+  const RASCUNHO = 'feitto.diagnostico.rascunho';
+  const RASCUNHO_DIAS = 7;
+
   const ultima = etapas.length - 1;
   let atual = 0;
 
-  // a partir daqui o formulário é uma coisa só na tela: um passo por vez
+  const condicionais = [...form.querySelectorAll<HTMLElement>('[data-se-campo]')];
+
   form.classList.add('is-stepped');
   progresso.hidden = false;
   controles.hidden = false;
+
+  restaurar();
+  aplicarCondicoes();
   mostrar(0, { rolar: false });
+
+  /* ---------------------------------------------------------------- *
+   * campos condicionais
+   * ---------------------------------------------------------------- */
+
+  /**
+   * Um campo escondido por condição fica disabled: fora da validação, fora
+   * do Tab e fora do FormData. Sem isso, o required de uma pergunta que a
+   * pessoa nunca viu trava o envio com uma mensagem invisível.
+   */
+  function aplicarCondicoes() {
+    for (const bloco of condicionais) {
+      const nome = bloco.dataset.seCampo!;
+      const esperado = bloco.dataset.seValor!;
+      const marcado = form.querySelector<HTMLInputElement>(`[name="${nome}"]:checked`);
+      const valor = marcado?.value ?? (form.elements.namedItem(nome) as HTMLInputElement | null)?.value;
+      const mostrar = valor === esperado;
+      const exigido = bloco.dataset.req === 'sim';
+
+      bloco.toggleAttribute('data-ativo', mostrar);
+
+      const campos = [...bloco.querySelectorAll<HTMLInputElement>('input, textarea')];
+      campos.forEach((campo, i) => {
+        campo.disabled = !mostrar;
+        // num grupo de rádios basta o primeiro carregar o required
+        if (exigido) campo.required = mostrar && (campo.type !== 'radio' || i === 0);
+      });
+    }
+  }
+
+  form.addEventListener('change', () => {
+    aplicarCondicoes();
+    salvar();
+  });
+  form.addEventListener('input', salvar);
+
+  /* ---------------------------------------------------------------- *
+   * rascunho
+   * ---------------------------------------------------------------- */
+
+  function salvar() {
+    try {
+      const dados = coletar();
+      localStorage.setItem(RASCUNHO, JSON.stringify({ at: Date.now(), passo: atual, dados }));
+    } catch {
+      /* storage bloqueado: o formulário segue, só não guarda rascunho */
+    }
+  }
+
+  function restaurar() {
+    try {
+      const bruto = localStorage.getItem(RASCUNHO);
+      if (!bruto) return;
+
+      const { at, dados } = JSON.parse(bruto) as { at: number; dados: Record<string, string> };
+      if (!at || (Date.now() - at) / 86_400_000 > RASCUNHO_DIAS) {
+        localStorage.removeItem(RASCUNHO);
+        return;
+      }
+
+      for (const [nome, valor] of Object.entries(dados)) {
+        if (!valor) continue;
+        const campos = form.querySelectorAll<HTMLInputElement>(`[name="${nome}"]`);
+        for (const campo of campos) {
+          if (campo.type === 'radio') campo.checked = campo.value === valor;
+          else if (campo.type === 'checkbox') campo.checked = valor === 'on';
+          else campo.value = valor;
+        }
+      }
+    } catch {
+      /* rascunho corrompido: começa do zero */
+    }
+  }
+
+  function limparRascunho() {
+    try {
+      localStorage.removeItem(RASCUNHO);
+    } catch {
+      /* nada a fazer */
+    }
+  }
+
+  /** As etapas fora de cena estão disabled, então FormData viria vazia. */
+  function coletar(): Record<string, string> {
+    const travadas = etapas.map((e) => e.disabled);
+    for (const etapa of etapas) etapa.disabled = false;
+    aplicarCondicoes(); // condicionais escondidas continuam de fora
+
+    const dados = Object.fromEntries(new FormData(form).entries()) as Record<string, string>;
+
+    etapas.forEach((etapa, i) => (etapa.disabled = travadas[i]));
+    return dados;
+  }
+
+  /* ---------------------------------------------------------------- *
+   * navegação
+   * ---------------------------------------------------------------- */
 
   function mostrar(indice: number, opcoes: { rolar?: boolean } = {}) {
     atual = Math.max(0, Math.min(indice, ultima));
 
     etapas.forEach((etapa, i) => {
       etapa.hidden = i !== atual;
-      // campo escondido não entra na validação nem no foco por Tab
       etapa.disabled = i !== atual;
     });
+    aplicarCondicoes();
 
     const etapa = etapas[atual];
     passoNum.textContent = etapa.dataset.num ?? '';
@@ -945,13 +1128,15 @@ const total = etapas.length + 1;
     if (opcoes.rolar !== false) {
       progresso.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    etapa.querySelector<HTMLElement>('input, textarea')?.focus({ preventScroll: true });
+    etapa.querySelector<HTMLElement>('input:not([disabled]), textarea:not([disabled])')
+      ?.focus({ preventScroll: true });
   }
 
-  /** Valida só a etapa visível: as outras estão disabled e ficam de fora. */
+  /** Valida só a etapa visível. As outras estão disabled e ficam de fora. */
   function etapaValida(): boolean {
     const campos = [...etapas[atual].querySelectorAll<HTMLInputElement>('input, textarea')];
     for (const campo of campos) {
+      if (campo.disabled) continue;
       if (!campo.checkValidity()) {
         campo.reportValidity();
         campo.focus({ preventScroll: true });
@@ -968,7 +1153,10 @@ const total = etapas.length + 1;
   });
 
   btnAvancar.addEventListener('click', () => {
-    if (etapaValida()) mostrar(atual + 1);
+    if (etapaValida()) {
+      salvar();
+      mostrar(atual + 1);
+    }
   });
 
   btnVoltar.addEventListener('click', () => mostrar(atual - 1));
@@ -976,8 +1164,7 @@ const total = etapas.length + 1;
   // Enter avança em vez de enviar, exceto na última etapa
   form.addEventListener('keydown', (event) => {
     if (event.key !== 'Enter') return;
-    const alvo = event.target as HTMLElement;
-    if (alvo.tagName === 'TEXTAREA') return;
+    if ((event.target as HTMLElement).tagName === 'TEXTAREA') return;
     if (atual !== ultima) {
       event.preventDefault();
       if (etapaValida()) mostrar(atual + 1);
@@ -991,11 +1178,7 @@ const total = etapas.length + 1;
 
     btnEnviar.disabled = true;
     btnEnviar.textContent = 'Enviando…';
-
-    // as etapas estão disabled, então FormData sozinho viria vazia
-    for (const etapa of etapas) etapa.disabled = false;
-    const dados = Object.fromEntries(new FormData(form).entries());
-    for (const [i, etapa] of etapas.entries()) etapa.disabled = i !== atual;
+    const dados = coletar();
 
     try {
       if (ENDPOINT) {
@@ -1009,6 +1192,7 @@ const total = etapas.length + 1;
         console.info('[diagnóstico] endpoint ainda não configurado. Respostas:', dados);
       }
 
+      limparRascunho();
       form.hidden = true;
       abertura.hidden = true;
       depois.hidden = true;
@@ -1020,7 +1204,7 @@ const total = etapas.length + 1;
       btnEnviar.textContent = 'Enviar minhas respostas';
       erro.hidden = false;
       erro.textContent =
-        'Não consegui enviar agora. Tente de novo em instantes ou me escreva em contato@feitto.com.br que eu leio do mesmo jeito.';
+        'Não consegui enviar agora. Suas respostas ficaram guardadas neste navegador. Tente de novo em instantes ou me escreva em contato@feitto.com.br que eu leio do mesmo jeito.';
     }
   });
 </script>

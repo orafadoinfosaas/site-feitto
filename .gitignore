@@ -6,9 +6,14 @@ dist/
 .env
 .env.production
 
-# ativos originais do ensaio (300dpi, pesados) — versionar no Drive
-assets/
+# Originais do ensaio em 300dpi, pesados demais para o repositório: ficam no
+# Drive. A barra inicial importa — sem ela o padrão casaria também com
+# src/assets/, que é de onde o site tira as imagens.
+/assets/
 
 # segredos locais
 .env
 .env.local
+
+# verificação de build limpo
+.clone-check/

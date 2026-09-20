@@ -52,6 +52,9 @@ const PERMITIDAS = [
   'http://localhost:4321',
   'http://127.0.0.1:4321',
 ]
+  // o navegador manda a origem sem barra final; uma barra a mais no secret
+  // faria o match falhar em silêncio, e o formulário voltaria 403 sem pista
+  .map((o) => o.replace(/\/+$/, ''))
   .filter(Boolean)
   .map(paraRegex);
 
@@ -62,7 +65,7 @@ function origemLiberada(origem: string | null): boolean {
 /** Para o cabeçalho: devolve a origem que pediu, se ela puder. */
 function origemEco(origem: string | null): string {
   if (origemLiberada(origem)) return origem!;
-  return SITE_ORIGIN.split(',')[0]?.trim() ?? '';
+  return SITE_ORIGIN.split(',')[0]?.trim().replace(/\/+$/, '') ?? '';
 }
 
 function cors(origem: string | null): Record<string, string> {

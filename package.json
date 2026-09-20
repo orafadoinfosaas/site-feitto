@@ -10,7 +10,8 @@
     "check": "astro check",
     "test:consent": "tsx tests/consentimento.test.ts",
     "test": "npm run build && npm run test:consent && npm run test:headers",
-    "test:headers": "tsx tests/headers.test.ts"
+    "test:headers": "tsx tests/headers.test.ts",
+    "test:clone": "rm -rf .clone-check && mkdir -p .clone-check && git ls-files -z | tar -cf - --null -T - | (cd .clone-check && tar -xf -) && cd .clone-check && npm ci --no-audit --no-fund && npx astro build && cd .. && rm -rf .clone-check && echo 'build limpo: o repositório basta'"
   },
   "dependencies": {
     "astro": "^7.3.3",

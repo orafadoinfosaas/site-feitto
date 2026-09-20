@@ -32,21 +32,23 @@ RUN npm run build
 # ---------------------------------------------------------------------------
 # Runtime
 #
-# nginx sem root: o unprivileged serve na 8080 e não precisa de CAP_NET_BIND.
+# nginx oficial, e não o unprivileged, porque o proxy do painel encaminha para
+# a porta 80 — a única que um processo sem privilégio não consegue abrir. Aqui
+# só o master roda como root, o tempo de fazer o bind; os workers descem para
+# o usuário `nginx`, que é o comportamento padrão da imagem.
 # ---------------------------------------------------------------------------
-FROM nginxinc/nginx-unprivileged:1.29-alpine AS runtime
+FROM nginx:1.29-alpine AS runtime
 
 LABEL org.opencontainers.image.title="Site FEITTO"
 LABEL org.opencontainers.image.source="https://github.com/orafadoinfosaas/site-feitto"
 
-COPY --chown=nginx:nginx docker/security-headers.conf /etc/nginx/snippets/security-headers.conf
-COPY --chown=nginx:nginx docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=build --chown=nginx:nginx /app/dist /usr/share/nginx/html
+COPY docker/security-headers.conf /etc/nginx/snippets/security-headers.conf
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist /usr/share/nginx/html
 
-USER nginx
-EXPOSE 8080 3000
+EXPOSE 80 8080 3000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD wget -q --spider http://127.0.0.1:8080/ || exit 1
+  CMD wget -q --spider http://127.0.0.1:80/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

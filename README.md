@@ -124,8 +124,14 @@ endpoint, tem que reconstruir.
 `PUBLIC_NOINDEX=true` põe `noindex, nofollow` em todas as páginas. Tirar
 quando o domínio final entrar no ar.
 
-**3. Porta**: 8080. O contêiner também escuta na 3000, que é o padrão de
-muitos painéis — se o domínio apontar para qualquer uma das duas, funciona.
+**3. Porta**: o contêiner escuta em **80**, 8080 e 3000. O EasyPanel encaminha
+para a 80 por padrão, então não há nada a configurar.
+
+A imagem de runtime é o `nginx` oficial, e não o `nginx-unprivileged`: a 80 é
+justamente a porta que um processo sem privilégio não consegue abrir. Só o
+master roda como root, o tempo de fazer o bind; os workers descem para o
+usuário `nginx`. Se preferir o contêiner inteiro sem root, troque a imagem
+por `nginxinc/nginx-unprivileged` e aponte o domínio para a 8080.
 
 **4. Liberar o domínio no CORS da Edge Function:**
 

@@ -124,7 +124,8 @@ endpoint, tem que reconstruir.
 `PUBLIC_NOINDEX=true` põe `noindex, nofollow` em todas as páginas. Tirar
 quando o domínio final entrar no ar.
 
-**3. Porta**: 8080.
+**3. Porta**: 8080. O contêiner também escuta na 3000, que é o padrão de
+muitos painéis — se o domínio apontar para qualquer uma das duas, funciona.
 
 **4. Liberar o domínio no CORS da Edge Function:**
 
@@ -147,6 +148,12 @@ assets versionados estão em `docker/nginx.conf`. O HTML vai com
 A CSP libera de antemão os domínios do GA4 e do Pixel: eles só sobem depois
 do aceite, mas a política precisa permiti-los, senão o consentimento não
 teria efeito prático.
+
+Os cabeçalhos de segurança ficam em `docker/security-headers.conf` e são
+incluídos em **cada** `location` que declara `add_header`. Não é redundância:
+no nginx, um bloco que declara qualquer `add_header` para de herdar os de
+cima. Um `location` com `Cache-Control` e sem o include perde toda a
+segurança em silêncio — `npm run test:headers` falha se isso acontecer.
 
 ## Escrita
 

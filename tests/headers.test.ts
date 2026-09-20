@@ -36,16 +36,34 @@ const ok = (d: string, c: boolean, extra = '') => {
   console.log(`  ${c ? '\x1b[32m✓\x1b[0m' : '\x1b[31m✗\x1b[0m'} ${d}${extra && !c ? ` — ${extra}` : ''}`);
 };
 
-/** Extrai os add_header do nginx.conf: a config real é a fonte da verdade. */
+/** Os de segurança vivem no snippet; a config real é a fonte da verdade. */
 function cabecalhosDoNginx(): Record<string, string> {
-  const conf = lerSync(join(RAIZ, 'docker', 'nginx.conf'), 'utf8');
+  const conf = lerSync(join(RAIZ, 'docker', 'security-headers.conf'), 'utf8');
   const headers: Record<string, string> = {};
   for (const m of conf.matchAll(/^\s*add_header\s+([\w-]+)\s+"([^"]*)"\s+always;/gm)) {
-    // os de cache são por rota; aqui interessam os globais
-    if (m[1].toLowerCase() === 'cache-control') continue;
     headers[m[1]] = m[2];
   }
   return headers;
+}
+
+/**
+ * No nginx, `add_header` só é herdado se o bloco filho não declarar nenhum
+ * `add_header` próprio. Um location que define Cache-Control e esquece o
+ * include perde toda a segurança em silêncio — foi assim que a home ficou
+ * sem CSP até isto ser descoberto servindo o site num nginx de verdade.
+ */
+function locationsSemInclude(): string[] {
+  const conf = lerSync(join(RAIZ, 'docker', 'nginx.conf'), 'utf8');
+  const faltando: string[] = [];
+
+  for (const m of conf.matchAll(/location\s+([^{]+)\{([^}]*)\}/g)) {
+    const [, alvo, corpo] = m;
+    if (!/add_header/.test(corpo)) continue;
+    if (!/include\s+\S*security-headers\.conf;/.test(corpo)) {
+      faltando.push(alvo.trim());
+    }
+  }
+  return faltando;
 }
 
 const HEADERS = cabecalhosDoNginx();
@@ -104,6 +122,22 @@ try {
     if (erros.length) ok(`/${rota || ''} sem erro de script`, false, erros[0]?.slice(0, 160));
 
     await contexto.close();
+  }
+
+  console.log('\nHerança de cabeçalhos no nginx');
+  {
+    const orfaos = locationsSemInclude();
+    ok(
+      'todo location com add_header reinclui os de segurança',
+      orfaos.length === 0,
+      orfaos.length ? `sem include: ${orfaos.join(', ')}` : '',
+    );
+
+    const conf = lerSync(join(RAIZ, 'docker', 'nginx.conf'), 'utf8');
+    ok(
+      'o server declara os de segurança uma vez',
+      /include\s+\S*security-headers\.conf;/.test(conf.split('location')[0]),
+    );
   }
 
   console.log('\nO que a política precisa permitir');

@@ -39,11 +39,12 @@ FROM nginxinc/nginx-unprivileged:1.29-alpine AS runtime
 LABEL org.opencontainers.image.title="Site FEITTO"
 LABEL org.opencontainers.image.source="https://github.com/orafadoinfosaas/site-feitto"
 
+COPY --chown=nginx:nginx docker/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --chown=nginx:nginx docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build --chown=nginx:nginx /app/dist /usr/share/nginx/html
 
 USER nginx
-EXPOSE 8080
+EXPOSE 8080 3000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD wget -q --spider http://127.0.0.1:8080/ || exit 1

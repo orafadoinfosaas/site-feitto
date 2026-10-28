@@ -1,0 +1,304 @@
+/* ------------------------------------------------------------------
+   Formulário do diagnóstico.
+
+   Global, e não escopado no componente, porque o formulário é desenhado
+   pelo JavaScript (src/lib/formulario.ts) a partir do banco: o Astro não
+   enxerga esses elementos na hora de gerar o CSS. Tudo fica sob
+   `.form-diag` para não vazar.
+   ------------------------------------------------------------------ */
+
+.form-diag .progresso {
+  max-width: 44rem;
+}
+.form-diag .progresso__barra {
+  height: 1px;
+  background: var(--silver);
+}
+.form-diag .progresso__feito {
+  display: block;
+  height: 1px;
+  width: 0;
+  background: var(--ink);
+  transition: width 620ms var(--ease);
+}
+.form-diag .progresso__texto {
+  margin-block-start: 1.125rem;
+  font-size: 0.6875rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--drift);
+}
+.form-diag .progresso__sep {
+  margin-inline: 0.5rem;
+}
+
+.form-diag .etapa {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  max-width: 44rem;
+}
+.form-diag .etapa[hidden] {
+  display: none;
+}
+/* cada etapa entra como os blocos do site */
+.form-diag .etapa:not([hidden]) {
+  animation: form-diag-entra var(--dur) var(--ease) both;
+}
+@keyframes form-diag-entra {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .form-diag .etapa:not([hidden]) {
+    animation: none;
+  }
+  .form-diag .progresso__feito {
+    transition: none;
+  }
+}
+
+.form-diag .etapa__head {
+  margin-block: clamp(2rem, 4vw, 2.75rem) clamp(2rem, 4vw, 3rem);
+}
+.form-diag .etapa__titulo {
+  font-family: var(--display);
+  font-weight: 200;
+  font-size: clamp(1.75rem, 3.6vw, 2.625rem);
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+/* uma coluna, com respiro: é o que deixa o formulário leve de responder */
+.form-diag .campos {
+  display: grid;
+  gap: clamp(2.25rem, 4vw, 3.25rem);
+}
+@media (min-width: 48rem) {
+  .form-diag .campos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .form-diag .campo {
+    grid-column: 1 / -1;
+  }
+  .form-diag .campo--meia {
+    grid-column: span 1;
+  }
+}
+
+.form-diag .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+/* o script revela apenas o que a resposta anterior pedir */
+.form-diag .campo[data-se-campo]:not([data-ativo]) {
+  display: none;
+}
+.form-diag .campo > label {
+  font-size: 0.9375rem;
+  color: var(--coffee);
+}
+.form-diag .req {
+  color: var(--drift);
+}
+
+/* uma linha de contexto onde a pergunta sozinha deixaria dúvida */
+.form-diag .campo__ajuda {
+  margin-block-start: -0.375rem;
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--drift-ink);
+}
+.form-diag .campo__ajuda--solta {
+  margin-block: -0.5rem 1rem;
+}
+
+.form-diag .campo input[type='text'],
+.form-diag .campo input[type='tel'],
+.form-diag .campo input[type='email'] {
+  min-height: 44px;
+  padding: 0.8125rem 0;
+  font-family: var(--sans);
+  font-size: 1.1875rem;
+  font-weight: 300;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-block-end: 1px solid var(--silver);
+  border-radius: 0;
+  transition: border-color 200ms var(--ease);
+}
+.form-diag .campo input:focus {
+  border-color: var(--ink);
+}
+.form-diag .campo input:not(:placeholder-shown):valid {
+  border-color: var(--drift);
+}
+
+.form-diag .campo textarea {
+  padding: 1.125rem 1.25rem;
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--silver);
+  border-radius: 0;
+  resize: vertical;
+  transition: border-color 200ms var(--ease);
+}
+.form-diag .campo textarea:focus {
+  border-color: var(--ink);
+}
+
+.form-diag .escolha {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.form-diag .escolha > legend {
+  padding: 0;
+  margin-block-end: 1.125rem;
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.form-diag .opcoes {
+  display: flex;
+  flex-direction: column;
+}
+
+/* a opção inteira é alvo de toque, e a marca de seleção é um filete */
+.form-diag .opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  min-height: 44px;
+  padding: 0.9375rem 0.875rem 0.9375rem 0;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--coffee);
+  cursor: pointer;
+  border-block-end: 1px solid var(--hairline-soft);
+  transition:
+    color 180ms var(--ease),
+    border-color 180ms var(--ease);
+}
+.form-diag .opcao:hover {
+  color: var(--ink);
+  border-color: var(--silver);
+}
+.form-diag .opcao:has(input:checked) {
+  color: var(--ink);
+  border-color: var(--ink);
+}
+.form-diag .opcao input {
+  flex: 0 0 auto;
+  width: 0.9375rem;
+  height: 0.9375rem;
+  margin-block-start: 0.3125rem;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+/* pergunta de escolha sozinha na etapa, como a de compromisso: pesa mais */
+.form-diag .etapa[data-unica] .escolha > legend {
+  font-size: clamp(1.0625rem, 1.9vw, 1.375rem);
+  line-height: 1.55;
+}
+.form-diag .etapa[data-unica] .opcao {
+  padding-block: 1.125rem;
+  font-size: clamp(1.0625rem, 1.6vw, 1.125rem);
+}
+
+.form-diag .lgpd {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  grid-column: 1 / -1;
+}
+.form-diag .lgpd input {
+  flex: 0 0 auto;
+  width: 1rem;
+  height: 1rem;
+  margin-block-start: 0.3125rem;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+.form-diag .lgpd label {
+  font-size: 0.875rem;
+  line-height: 1.75;
+  color: var(--coffee);
+  cursor: pointer;
+}
+.form-diag .lgpd a {
+  color: var(--ink);
+  text-decoration: none;
+  border-block-end: 1px solid var(--drift);
+}
+
+.form-diag .armadilha {
+  position: absolute;
+  inset-inline-start: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-diag .erro {
+  max-width: 44rem;
+  margin-block-start: 2rem;
+  border-inline-start: 2px solid var(--ink);
+  padding-inline-start: 1.125rem;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--coffee);
+}
+.form-diag .erro[hidden] {
+  display: none;
+}
+
+.form-diag .controles {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 44rem;
+  margin-block-start: clamp(2.5rem, 4vw, 3.5rem);
+  border-block-start: 1px solid var(--hairline);
+  padding-block-start: 1.75rem;
+}
+.form-diag .voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-height: 44px;
+  padding: 0;
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--drift-ink);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  transition: color 200ms var(--ease);
+}
+.form-diag .voltar:hover {
+  color: var(--ink);
+}
+.form-diag .voltar[hidden] {
+  visibility: hidden;
+}
+.form-diag .controles .btn {
+  margin-inline-start: auto;
+}
+.form-diag .controles .btn[hidden] {
+  display: none;
+}

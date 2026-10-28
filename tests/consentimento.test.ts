@@ -12,6 +12,7 @@ import { chromium, type Browser, type Page } from 'playwright';
 import { createServer } from 'node:http';
 import { readFile, stat } from 'node:fs/promises';
 import { join, extname } from 'node:path';
+import { POLICY_VERSION } from '../src/lib/consent.ts';
 
 const DIST = join(import.meta.dirname, '..', 'dist');
 const PORTA = 4399;
@@ -211,7 +212,7 @@ try {
   {
     const { page } = await abrir(browser, '', {
       id: 'x',
-      policy: '2026-09-20',
+      policy: POLICY_VERSION,
       at: new Date().toISOString(),
       analise: true,
       marketing: false,
@@ -228,7 +229,7 @@ try {
         'consentimento de 200 dias atrás',
         {
           id: 'x',
-          policy: '2026-09-20',
+          policy: POLICY_VERSION,
           at: new Date(Date.now() - 200 * 86_400_000).toISOString(),
           analise: true,
           marketing: true,

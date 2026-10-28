@@ -65,23 +65,31 @@ fique invisível sem JavaScript.
 ícones, sem emoji. Gradiente só como máscara de legibilidade sobre fotografia.
 Um bloco escuro por página, guardado para a virada do argumento.
 
-## Backend do diagnóstico
+## Backend do diagnóstico e painel
 
-Postgres para guardar o lead, Edge Function para receber o formulário e
-espelhar no ClickUp. Detalhes e comandos em [`supabase/README.md`](supabase/README.md).
+Postgres para guardar os leads e as perguntas, e duas Edge Functions:
+`diagnostico` (pública: serve o formulário e recebe as respostas) e `painel`
+(protegida por senha: CRM, editor do formulário, IA e teste). Detalhes e
+comandos em [`supabase/README.md`](supabase/README.md).
 
-A função grava no banco **antes** de chamar o ClickUp. Se o CRM cair, a
-resposta ainda é sucesso e a linha fica com `clickup_erro` preenchido, pronta
-para reenvio — o inverso perderia o lead por causa de um serviço de terceiro.
+O painel fica em `/painel`. As perguntas do formulário vivem no banco e o site
+as desenha no navegador; se o banco não responder, entra a cópia de reserva
+de `src/lib/formulario-padrao.ts`.
+
+A função grava o lead **antes** de pedir o pré-diagnóstico à OpenAI. Se a IA
+falhar, a resposta ainda é sucesso e o card mostra o erro, com botão para
+tentar de novo — o inverso perderia o lead por causa de um serviço de terceiro.
 
 Proteções: CORS restrito ao domínio, honeypot, limite de 3 envios por hora
-por hash de IP, validação de toda múltipla escolha contra a lista de opções, e
-RLS sem policies (anon e authenticated não leem nada). O IP nunca é gravado.
+por hash de IP, validação de toda múltipla escolha contra as opções vigentes,
+limite de tentativas de senha no painel, e RLS sem policies (anon e
+authenticated não leem nada). O IP nunca é gravado, e nome, WhatsApp e e-mail
+nunca vão para a OpenAI.
 
 O `astro check` ignora `supabase/`: aquele código roda em Deno. Para verificar:
 
 ```bash
-cd supabase/functions/diagnostico && npx deno@2 check *.ts
+npm run test:funcoes
 ```
 
 ## MCP do Supabase
@@ -204,8 +212,8 @@ rodapé.
 - [ ] `GA4_ID` e `META_PIXEL_ID` em `src/lib/consent.ts`
 - [ ] `PUBLIC_DIAGNOSTICO_ENDPOINT` no `.env` — sem ele o envio completa o
       fluxo na tela sem sair do navegador
-- [ ] Secrets da Edge Function: `CLICKUP_TOKEN`, `CLICKUP_LIST_ID`,
-      `SITE_ORIGIN`, `RATE_LIMIT_SALT`
+- [ ] Secrets das Edge Functions: `PAINEL_SENHA`, `OPENAI_API_KEY`,
+      `SITE_ORIGIN`, `RATE_LIMIT_SALT`, `POLITICA_VERSAO`
 - [ ] Colchetes das minutas legais: razão social, CNPJ, endereço, encarregado,
       comarca, prazo de retenção — e a revisão do advogado
 - [ ] `POLICY_VERSION` em `consent.ts` ao publicar a política final
@@ -218,9 +226,8 @@ rodapé.
 
 **Depois**
 
-- [ ] Agente que lê o formulário e escreve a análise no card do ClickUp. O
-      card já sai organizado na ordem em que a Luana lê; o agente substitui a
-      seção "Leitura" e nada no formulário muda
+- [ ] Condições no editor do formulário ("só aparece quando…"). O banco e o
+      formulário já suportam; falta a interface para criar
 - [ ] Seção de conteúdo. Fora do menu, e a palavra "blog" foi vetada
 - [ ] Nova assinatura da marca, se sair antes da publicação
 

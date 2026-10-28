@@ -20,7 +20,7 @@ export interface ConsentRecord {
 }
 
 /** Sobe junto com qualquer mudança relevante na Política de Privacidade. */
-export const POLICY_VERSION = '2026-09-20';
+export const POLICY_VERSION = '2026-10-28';
 
 /** Vencido o prazo, o banner volta a perguntar. */
 export const CONSENT_MAX_AGE_DAYS = 180;

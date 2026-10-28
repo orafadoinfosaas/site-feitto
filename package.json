@@ -9,8 +9,10 @@
     "preview": "astro preview",
     "check": "astro check",
     "test:consent": "tsx tests/consentimento.test.ts",
-    "test": "npm run build && npm run test:consent && npm run test:headers",
+    "test": "npm run build && npm run test:consent && npm run test:headers && npm run test:painel && npm run test:funcoes",
     "test:headers": "tsx tests/headers.test.ts",
+    "test:painel": "tsx tests/painel.test.ts",
+    "test:funcoes": "cd supabase/functions && npx -y deno check diagnostico/index.ts painel/index.ts && npx -y deno test --allow-env _shared/",
     "test:clone": "rm -rf .clone-check && mkdir -p .clone-check && git ls-files -z | tar -cf - --null -T - | (cd .clone-check && tar -xf -) && cd .clone-check && npm ci --no-audit --no-fund && npx astro build && cd .. && rm -rf .clone-check && echo 'build limpo: o repositório basta'"
   },
   "dependencies": {

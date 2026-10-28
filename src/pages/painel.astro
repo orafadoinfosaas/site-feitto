@@ -1,0 +1,876 @@
+---
+import '../styles/global.css';
+import '../styles/formulario.css';
+import Logo from '../components/Logo.astro';
+import { diagnosticoEndpoint, painelEndpoint } from '../lib/site';
+
+/**
+ * Painel da FEITTO: CRM, formulário, IA e teste.
+ *
+ * Página estática como o resto do site. Nada aqui é secreto: sem o token
+ * emitido pela Edge Function `painel`, a tela só mostra o login, e todo dado
+ * vem dela. Fora da busca pelo noindex, pelo robots.txt e pelo nginx.
+ *
+ * Sem o layout Base de propósito: o painel não tem banner de cookies, nem
+ * rodapé, nem nada que carregue terceiros.
+ */
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Painel | FEITTO</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+
+  <body class="painel">
+    <!-- login -->
+    <main class="entrada" id="entrada" hidden>
+      <form class="entrada__caixa" id="form-entrada">
+        <Logo width={120} />
+        <p class="eyebrow">Painel</p>
+        <label class="ed-campo">
+          <span class="ed-rotulo">Senha</span>
+          <input type="password" name="senha" autocomplete="current-password" required />
+        </label>
+        <p class="aviso aviso--erro" id="erro-entrada" hidden></p>
+        <button type="submit" class="btn btn--solid">Entrar</button>
+      </form>
+    </main>
+
+    <!-- aplicação -->
+    <div class="app" id="app" hidden>
+      <header class="topo">
+        <a href="/" class="topo__logo" aria-label="Ir ao site"><Logo width={104} /></a>
+        <nav class="abas" role="tablist" aria-label="Seções do painel">
+          <button type="button" role="tab" class="aba" data-aba="crm" aria-selected="true">Leads</button>
+          <button type="button" role="tab" class="aba" data-aba="formulario" aria-selected="false">Formulário</button>
+          <button type="button" role="tab" class="aba" data-aba="ia" aria-selected="false">IA</button>
+          <button type="button" role="tab" class="aba" data-aba="teste" aria-selected="false">Teste</button>
+        </nav>
+        <button type="button" class="link" id="sair">Sair</button>
+      </header>
+
+      <main class="conteudo">
+        <section class="secao secao--larga" data-secao="crm" role="tabpanel"></section>
+        <section class="secao" data-secao="formulario" role="tabpanel" hidden></section>
+        <section class="secao" data-secao="ia" role="tabpanel" hidden></section>
+        <section class="secao" data-secao="teste" role="tabpanel" hidden></section>
+      </main>
+    </div>
+
+    <dialog class="dialogo" id="dialogo-lead"></dialog>
+    <dialog class="dialogo dialogo--estreito" id="dialogo-pergunta"></dialog>
+  </body>
+</html>
+
+<script is:inline define:vars={{ painel: painelEndpoint, formulario: diagnosticoEndpoint }}>
+  window.__FEITTO_PAINEL__ = { painel, formulario };
+</script>
+
+<script>
+  import { criarApi } from '../lib/painel/api';
+  import { montarCrm } from '../lib/painel/crm';
+  import { montarEditor } from '../lib/painel/editor';
+  import { montarIa } from '../lib/painel/ia';
+  import { montarTeste } from '../lib/painel/teste';
+
+  const enderecos = (window as unknown as { __FEITTO_PAINEL__: { painel: string; formulario: string } })
+    .__FEITTO_PAINEL__;
+
+  const entrada = document.querySelector<HTMLElement>('#entrada')!;
+  const formEntrada = document.querySelector<HTMLFormElement>('#form-entrada')!;
+  const erroEntrada = document.querySelector<HTMLElement>('#erro-entrada')!;
+  const app = document.querySelector<HTMLElement>('#app')!;
+  const secoes = new Map(
+    [...document.querySelectorAll<HTMLElement>('[data-secao]')].map((s) => [s.dataset.secao!, s]),
+  );
+  const abas = [...document.querySelectorAll<HTMLButtonElement>('[data-aba]')];
+  const dialogoLead = document.querySelector<HTMLDialogElement>('#dialogo-lead')!;
+  const dialogoPergunta = document.querySelector<HTMLDialogElement>('#dialogo-pergunta')!;
+
+  const api = criarApi(enderecos.painel, () => mostrarEntrada('A sessão expirou. Entre de novo.'));
+
+  const crm = montarCrm(secoes.get('crm')!, dialogoLead, api);
+  const editor = montarEditor(secoes.get('formulario')!, dialogoPergunta, api);
+  const ia = montarIa(secoes.get('ia')!, api);
+  const teste = montarTeste(secoes.get('teste')!, api, enderecos.formulario, async (id) => {
+    ir('crm');
+    await crm.mostrarTestes();
+    crm.abrir(id);
+  });
+
+  const carregadores: Record<string, () => unknown> = {
+    crm: crm.carregar,
+    formulario: editor.carregar,
+    ia: ia.carregar,
+    teste: teste.carregar,
+  };
+
+  function ir(aba: string, carregar = true) {
+    for (const b of abas) b.setAttribute('aria-selected', String(b.dataset.aba === aba));
+    for (const [nome, s] of secoes) s.hidden = nome !== aba;
+    try {
+      history.replaceState(null, '', `#${aba}`);
+    } catch {
+      /* sem history: a aba só não fica no endereço */
+    }
+    if (carregar) carregadores[aba]?.();
+  }
+
+  abas.forEach((b) => b.addEventListener('click', () => ir(b.dataset.aba!)));
+
+  // setas trocam de aba, como pede o padrão de tablist
+  document.querySelector('.abas')!.addEventListener('keydown', (e) => {
+    const k = (e as KeyboardEvent).key;
+    if (k !== 'ArrowRight' && k !== 'ArrowLeft') return;
+    const i = abas.findIndex((b) => b.getAttribute('aria-selected') === 'true');
+    const proxima = abas[(i + (k === 'ArrowRight' ? 1 : abas.length - 1)) % abas.length];
+    proxima.focus();
+    ir(proxima.dataset.aba!);
+  });
+
+  function mostrarEntrada(mensagem?: string) {
+    app.hidden = true;
+    entrada.hidden = false;
+    for (const d of [dialogoLead, dialogoPergunta]) if (d.open) d.close();
+    erroEntrada.hidden = !mensagem;
+    erroEntrada.textContent = mensagem ?? '';
+    formEntrada.querySelector('input')?.focus();
+  }
+
+  function mostrarApp() {
+    entrada.hidden = true;
+    app.hidden = false;
+    const inicial = location.hash.slice(1);
+    ir(secoes.has(inicial) ? inicial : 'crm');
+  }
+
+  formEntrada.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const botao = formEntrada.querySelector<HTMLButtonElement>('button')!;
+    const senha = formEntrada.querySelector<HTMLInputElement>('input')!;
+    botao.disabled = true;
+    erroEntrada.hidden = true;
+    try {
+      await api.entrar(senha.value);
+      senha.value = '';
+      mostrarApp();
+    } catch (erro) {
+      erroEntrada.textContent = (erro as Error).message;
+      erroEntrada.hidden = false;
+    }
+    botao.disabled = false;
+  });
+
+  document.querySelector('#sair')!.addEventListener('click', () => {
+    api.sair();
+    mostrarEntrada();
+  });
+
+  // clicar fora da ficha fecha
+  for (const d of [dialogoLead, dialogoPergunta]) {
+    d.addEventListener('click', (e) => {
+      if (e.target === d) d.close();
+    });
+  }
+
+  if (api.logado()) mostrarApp();
+  else mostrarEntrada();
+</script>
+
+<style is:global>
+  /* ------------------------------------------------------------------
+     Painel. Mesma paleta e tipografia do site, densidade de ferramenta.
+     Global porque quase tudo aqui é desenhado pelo JavaScript.
+     ------------------------------------------------------------------ */
+
+  .painel {
+    min-height: 100vh;
+    background: var(--alyssum);
+  }
+  .painel [hidden] {
+    display: none !important;
+  }
+  .painel h2 {
+    font-family: var(--display);
+    font-weight: 300;
+    font-size: 1.5rem;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .painel h3 {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+  .painel h4 {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--coffee);
+  }
+
+  .painel input[type='text'],
+  .painel input[type='search'],
+  .painel input[type='password'],
+  .painel select,
+  .painel textarea {
+    width: 100%;
+    min-height: 40px;
+    padding: 0.5rem 0.75rem;
+    font: 300 0.9375rem/1.5 var(--sans);
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--silver);
+    border-radius: 2px;
+  }
+  .painel textarea {
+    resize: vertical;
+  }
+  .painel input:focus-visible,
+  .painel select:focus-visible,
+  .painel textarea:focus-visible,
+  .painel button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 1px;
+  }
+  /* o formulário de teste mantém o visual do site, não o do painel */
+  .painel .form-diag input[type='text'],
+  .painel .form-diag input[type='tel'],
+  .painel .form-diag input[type='email'] {
+    background: none;
+    border: 0;
+    border-block-end: 1px solid var(--silver);
+    padding-inline: 0;
+  }
+  .painel .form-diag textarea {
+    background: none;
+  }
+
+  .link {
+    /* numa coluna flex, o link ocupa só o próprio texto */
+    align-self: flex-start;
+    padding: 0;
+    font: 400 0.8125rem var(--sans);
+    color: var(--ink);
+    background: none;
+    border: 0;
+    border-block-end: 1px solid var(--drift);
+    cursor: pointer;
+    text-decoration: none;
+  }
+  .link:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  .link--perigo {
+    color: #8a2a1f;
+    border-color: #c99a92;
+  }
+  .btn--mini {
+    min-height: 36px;
+    padding: 0.5rem 1rem;
+  }
+  .icone {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 0.25rem 0.5rem;
+    font: 400 0.8125rem var(--sans);
+    color: var(--coffee);
+    background: none;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .icone:hover:not(:disabled) {
+    border-color: var(--ink);
+    color: var(--ink);
+  }
+  .icone:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .aviso {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--coffee);
+    background: var(--hairline-soft);
+    border-inline-start: 2px solid var(--drift);
+  }
+  .aviso--erro {
+    color: #6d2118;
+    background: #f3e2de;
+    border-color: #a8473b;
+  }
+  .nota-painel {
+    max-width: 46rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+    color: var(--drift-ink);
+  }
+  .salvo {
+    font-size: 0.8125rem;
+    color: var(--drift-ink);
+  }
+
+  .selo {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+  }
+  .selo--alto {
+    color: #2f5d3a;
+  }
+  .selo--medio {
+    color: #7a5a14;
+  }
+  .selo--baixo {
+    color: #8a2a1f;
+  }
+  .selo--pendente {
+    color: var(--drift-ink);
+    border-style: dashed;
+  }
+  .selo--erro {
+    color: #8a2a1f;
+    border-style: dashed;
+  }
+  .selo--teste {
+    color: var(--alyssum);
+    background: var(--drift-ink);
+    border-color: var(--drift-ink);
+    margin-inline-start: 0.5rem;
+    vertical-align: middle;
+  }
+
+  /* login ------------------------------------------------------------ */
+  .entrada {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+  }
+  .entrada__caixa {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: min(100%, 22rem);
+    color: var(--ink);
+  }
+
+  /* moldura ---------------------------------------------------------- */
+  .topo {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.75rem clamp(1rem, 3vw, 2rem);
+    background: var(--alyssum);
+    border-block-end: 1px solid var(--hairline);
+  }
+  .topo .link {
+    align-self: center;
+  }
+  .topo__logo {
+    display: flex;
+    color: var(--ink);
+  }
+  .abas {
+    display: flex;
+    gap: 0.25rem;
+    margin-inline-end: auto;
+    overflow-x: auto;
+  }
+  .aba {
+    min-height: 40px;
+    padding: 0.5rem 0.875rem;
+    font: 400 0.75rem var(--sans);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+    background: none;
+    border: 0;
+    border-block-end: 1px solid transparent;
+    cursor: pointer;
+  }
+  .aba[aria-selected='true'] {
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .conteudo {
+    padding: clamp(1rem, 3vw, 2rem);
+  }
+  .secao {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+  .secao--larga {
+    max-width: none;
+  }
+  .painel-sec {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-block-end: 2rem;
+    border-block-end: 1px solid var(--hairline);
+  }
+
+  /* CRM -------------------------------------------------------------- */
+  .barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+  }
+  .barra input[type='search'] {
+    flex: 1 1 18rem;
+    max-width: 28rem;
+  }
+  .barra__check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--coffee);
+  }
+  .crm__contador {
+    margin-inline-start: auto;
+    font-size: 0.8125rem;
+    color: var(--drift-ink);
+  }
+  .quadro {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(15rem, 1fr);
+    gap: 1rem;
+    overflow-x: auto;
+    padding-block-end: 1rem;
+  }
+  .coluna {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 60vh;
+    padding: 0.75rem;
+    background: var(--hairline-soft);
+    border: 1px solid transparent;
+    border-radius: 2px;
+  }
+  .coluna.is-alvo {
+    border-color: var(--ink);
+    border-style: dashed;
+  }
+  .coluna__nome {
+    display: flex;
+    justify-content: space-between;
+  }
+  .coluna__corpo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+  .coluna__vazia {
+    font-size: 0.8125rem;
+    color: var(--drift);
+  }
+  .cartao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    width: 100%;
+    padding: 0.875rem;
+    font: inherit;
+    text-align: start;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+    cursor: pointer;
+  }
+  .cartao:hover {
+    border-color: var(--drift);
+  }
+  .cartao.is-arrastando {
+    opacity: 0.4;
+  }
+  .cartao__topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 0.5rem;
+  }
+  .cartao__nome {
+    font-weight: 400;
+  }
+  .cartao__empresa,
+  .cartao__resumo {
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: var(--coffee);
+  }
+  .cartao__resumo {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: var(--drift-ink);
+  }
+  .cartao__rodape {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    margin-block-start: 0.25rem;
+    font-size: 0.75rem;
+    color: var(--drift-ink);
+  }
+
+  /* fichas e diálogos ------------------------------------------------ */
+  .dialogo {
+    width: min(100% - 2rem, 48rem);
+    max-height: calc(100vh - 2rem);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--ink);
+    background: var(--alyssum);
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+  }
+  .dialogo--estreito {
+    width: min(100% - 2rem, 38rem);
+  }
+  .dialogo::backdrop {
+    background: rgb(28 22 25 / 0.45);
+  }
+  .dialogo__fechar {
+    float: right;
+    width: 40px;
+    height: 40px;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--coffee);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+  .ficha {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .ficha__cabeca {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+  .ficha__cabeca select {
+    width: auto;
+  }
+  .ficha__data {
+    font-size: 0.8125rem;
+    color: var(--drift-ink);
+  }
+  .ficha__contato {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+  }
+  .ficha__contato a {
+    color: var(--ink);
+  }
+  .ficha__sec {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-block-start: 1.25rem;
+    border-block-start: 1px solid var(--hairline);
+  }
+  .ficha__rodape {
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--hairline);
+  }
+  .pre__encaixe {
+    line-height: 1.6;
+  }
+  .pre__bloco {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+  .ficha h2,
+  .ficha h3,
+  .ficha h4,
+  .ficha p,
+  .painel-sec h2 {
+    margin: 0;
+  }
+  .pre__bloco p,
+  .pre__bloco li {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--coffee);
+  }
+  .pre__bloco ul {
+    margin: 0;
+    padding-inline-start: 1.125rem;
+  }
+  .pre__meta {
+    font-size: 0.75rem;
+    color: var(--drift-ink);
+  }
+  .respostas__etapa {
+    margin-block-start: 0.5rem;
+  }
+  .respostas {
+    display: grid;
+    gap: 0.25rem 0;
+    margin: 0;
+  }
+  .respostas dt {
+    font-size: 0.8125rem;
+    color: var(--drift-ink);
+  }
+  .respostas dd {
+    margin: 0 0 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    white-space: pre-wrap;
+  }
+
+  /* editor do formulário --------------------------------------------- */
+  .etapa-ed {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.25rem;
+    background: #fff;
+    border: 1px solid var(--hairline);
+    border-radius: 2px;
+  }
+  .etapa-ed__cabeca {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem;
+  }
+  .etapa-ed__num {
+    font-family: var(--display);
+    font-size: 1.75rem;
+    font-weight: 200;
+    color: var(--drift);
+  }
+  .etapa-ed__campos {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.75rem;
+    flex: 1 1 20rem;
+  }
+  .etapa-ed__campos label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1 1 12rem;
+    font-size: 0.75rem;
+    color: var(--drift-ink);
+  }
+  .perguntas {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pergunta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-block: 0.875rem;
+    border-block-start: 1px solid var(--hairline-soft);
+  }
+  .pergunta__texto {
+    flex: 1 1 20rem;
+    min-width: 0;
+  }
+  .pergunta__meta {
+    font-size: 0.75rem;
+    color: var(--drift-ink);
+  }
+  .pergunta__rotulo {
+    margin-block-start: 0.25rem;
+    line-height: 1.5;
+  }
+  .pergunta__condicao {
+    margin-block-start: 0.375rem;
+    font-size: 0.8125rem;
+    color: var(--drift-ink);
+    font-style: italic;
+  }
+  .pergunta__condicao.is-quebrada {
+    color: #8a2a1f;
+    font-style: normal;
+  }
+  .pergunta__acoes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.375rem;
+  }
+
+  .ed-pergunta {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+  }
+  .ed-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    align-items: stretch;
+  }
+  .ed-rotulo {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+  .ed-tipos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .ed-tipos legend {
+    margin-block-end: 0.5rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--drift-ink);
+  }
+  .ed-tipo,
+  .ed-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+  }
+  .ed-opcoes {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ed-opcoes li {
+    display: flex;
+    gap: 0.375rem;
+  }
+
+  /* IA --------------------------------------------------------------- */
+  .ia__instrucoes {
+    font-size: 0.875rem !important;
+    line-height: 1.65 !important;
+  }
+  .ia__linha {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .ia__linha .ed-campo {
+    flex: 1 1 14rem;
+  }
+  .ia__nota {
+    flex-grow: 3 !important;
+  }
+  .versoes,
+  .docs {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .versao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    padding-block: 0.875rem;
+    border-block-start: 1px solid var(--hairline-soft);
+    font-size: 0.875rem;
+  }
+  .versao .selo {
+    margin-inline-start: 0.5rem;
+  }
+  .versao__nota {
+    color: var(--drift-ink);
+  }
+  .docs li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-block: 0.75rem;
+    border-block-start: 1px solid var(--hairline-soft);
+    font-size: 0.9375rem;
+  }
+  .docs__meta {
+    margin-inline-end: auto;
+    font-size: 0.8125rem;
+    color: var(--drift-ink);
+  }
+  .docs__vazio {
+    color: var(--drift-ink);
+  }
+
+  /* teste ------------------------------------------------------------ */
+  .teste__form {
+    padding: clamp(1rem, 3vw, 2rem);
+    background: var(--alyssum);
+    border: 1px solid var(--hairline);
+  }
+  .teste__resultado {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .teste__ok {
+    font-size: 0.9375rem;
+    color: var(--coffee);
+  }
+  .teste__ficha {
+    padding: clamp(1rem, 3vw, 2rem);
+    background: #fff;
+    border: 1px solid var(--hairline);
+  }
+  .teste__rodape {
+    padding-block-start: 1rem;
+  }
+</style>

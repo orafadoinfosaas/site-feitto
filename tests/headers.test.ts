@@ -84,7 +84,7 @@ const servidor = createServer(async (req, res) => {
   }
 }).listen(PORTA);
 
-const ROTAS = ['', 'metodo', 'quem-conduz', 'casos', 'diagnostico', 'links',
+const ROTAS = ['', 'metodo', 'quem-conduz', 'casos', 'diagnostico', 'painel', 'links',
                'politica-de-privacidade', 'termos-de-uso', '404.html'];
 
 console.log('\nCabeçalhos do nginx, aplicados a um navegador real\n');

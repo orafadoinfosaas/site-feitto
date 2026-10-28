@@ -23,6 +23,9 @@ export const diagnosticoEndpoint =
   import.meta.env.PUBLIC_DIAGNOSTICO_ENDPOINT ||
   'https://ixhkxejqqeinhpvobtsx.supabase.co/functions/v1/diagnostico';
 
+/** A função do painel mora ao lado da do formulário, no mesmo projeto. */
+export const painelEndpoint = diagnosticoEndpoint.replace(/\/diagnostico\/?$/, '/painel');
+
 export const nav = [
   { href: '/metodo', label: 'O método' },
   { href: '/quem-conduz', label: 'Quem conduz' },

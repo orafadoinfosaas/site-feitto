@@ -4,3 +4,8 @@ project_id = "site-feitto"
 # o formulário é anônimo: quem responde não tem login.
 # A proteção é CORS + limite por IP + honeypot + validação no servidor.
 verify_jwt = false
+
+[functions.painel]
+# o painel não usa o login do Supabase: a função confere a própria senha
+# (PAINEL_SENHA) e emite um token assinado. Ver _shared/sessao.ts.
+verify_jwt = false

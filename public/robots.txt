@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /links
+Disallow: /painel
 
 Sitemap: https://feitto.com.br/sitemap-index.xml
